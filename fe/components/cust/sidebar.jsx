@@ -16,10 +16,10 @@ export default function SidebarLayout() {
   const secondaryNav = [{ label: "About Us", icon: "./about.svg", path: "/" }];
 
   return (
-    <div className="flex overflow-hidden rounded-lg min-h-screen sidebar-gradient">
+    <div className="flex rounded-lg min-h-screen sidebar-gradient">
       {/* Sidebar */}
       <div
-        className={`fixed md:relative z-50 h-full
+        className={`fixed md:relative z-50 h-full shadow-[4px_4px_12px_rgba(0,0,0,0.25)]
     ${isSidebarOpen ? "animate-slide-right" : "hidden"}
     md:w-64
   `}
