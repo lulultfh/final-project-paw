@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const db = require("../database/db");
-const { use } = require("react");
+const bcrypt = require("bcrypt");
 
 router.get("/", (req, res) => {
   db.query("SELECT * FROM user", (err, results) => {
@@ -63,6 +63,34 @@ router.delete('/:id', (req, res) => {
         if (results.affectedRows === 0) return res.status(404).send('User tidak ditemukan');
         res.status(204).send();
     });
+});
+
+router.post("/login", (req, res) => {
+  const { username, passwd } = req.body;
+
+  if (!username || !passwd) {
+    return res.status(400).json({ message: "Username dan password wajib diisi!" });
+  }
+
+  db.query("SELECT * FROM user WHERE username = ?", [username], async (err, results) => {
+    if (err) return res.status(500).json({ error: "Internal Server Error" });
+    if (results.length === 0) return res.status(401).json({ message: "User tidak ditemukan" });
+
+    const user = results[0];
+    const match = await bcrypt.compare(passwd, user.passwd);
+
+    if (!match) {
+      return res.status(401).json({ message: "Password salah!" });
+    }
+
+    const token = jwt.sign(
+      { id: user.id, username: user.username, role: user.role }, 
+      JWT_SECRET,
+      { expiresIn: "3h" }
+    );
+
+    res.json({ message: "Login berhasil", token });
+  });
 });
 
 module.exports = router;
