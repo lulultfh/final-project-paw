@@ -11,7 +11,7 @@ export default function SidebarLayoutAdmin() {
   const pathname = usePathname();
 
   const mainNav = [
-    { label: "Home", icon: "/home.svg", path: "/home" },
+    { label: "Home", icon: "/home.svg", path: "/home-admin" },
     { label: "Manage Product", icon: "/product.svg", path: "/manage-product" },
     { label: "Manage Order", icon: "/transaction.svg", path: "/manage-order" },
   ];
