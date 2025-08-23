@@ -11,13 +11,13 @@ export default function SidebarLayoutAdmin() {
   const pathname = usePathname();
 
   const mainNav = [
-    { label: "Home", icon: "/home.svg", path: "/home" },
+    { label: "Home", icon: "/home.svg", path: "/home-admin" },
     { label: "Manage Product", icon: "/product.svg", path: "/manage-product" },
     { label: "Manage Order", icon: "/transaction.svg", path: "/manage-order" },
   ];
 
   const secondaryNav = [
-    { label: "About Us", icon: "/about.svg", path: "/about-us" },
+    { label: "Logout", icon: "/logout.svg", path: "/" },
   ];
   return (
     <div className="flex rounded-lg min-h-screen sidebar-gradient">
