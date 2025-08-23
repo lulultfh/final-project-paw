@@ -5,20 +5,20 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 
-export default function SidebarLayout() {
+export default function SidebarLayoutAdmin() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
-  const pathname = usePathname(); 
+  const pathname = usePathname();
 
   const mainNav = [
-    { label: "Home", icon: "/home.svg", path: "/" },
-    { label: "Transaction", icon: "/transaction.svg", path: "/transaction" },
+    { label: "Home", icon: "/home.svg", path: "/home" },
+    { label: "Manage Product", icon: "/product.svg", path: "/manage-product" },
+    { label: "Manage Order", icon: "/transaction.svg", path: "/manage-order" },
   ];
 
   const secondaryNav = [
     { label: "About Us", icon: "/about.svg", path: "/about-us" },
   ];
-
   return (
     <div className="flex rounded-lg min-h-screen sidebar-gradient">
       {/* Sidebar */}
@@ -29,8 +29,7 @@ export default function SidebarLayout() {
         `}
         style={{
           overflow: isSidebarOpen ? "visible" : "hidden",
-          background:
-            "linear-gradient(180deg, #F9D0CE 0.08%, #F3EBD8 99.92%)",
+          background: "linear-gradient(180deg, #F9D0CE 0.08%, #F3EBD8 99.92%)",
           boxShadow: "4px 4px 4px 0 rgba(0, 0, 0, 0.25)",
         }}
       >
