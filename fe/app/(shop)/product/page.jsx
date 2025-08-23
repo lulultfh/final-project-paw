@@ -1,23 +1,28 @@
 "use client"
-import { useEffect, useState } from "react"
+import { useEffect, useState } from "react";
+import { getAllProducts } from "./action";
 
 export default function ProductPage() {
-  const [products, setProducts] = useState([])
+  const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:3001/api/products")
-      .then(res => res.json())
+    getAllProducts()
       .then(data => setProducts(data))
-  }, [])
+      .catch(err => console.error("Error fetch products:", err));
+  }, []);
 
   return (
-    <div>
-      <h1>Product List</h1>
+    <div className="p-4">
+      <h1 className="text-2xl">Product List</h1>
       <ul>
         {products.map((p) => (
-          <li key={p.id}>{p.name} - {p.price}</li>
+          <li key={p.id}>
+            <a href={`/product/${p.id}`} className="text-blue-500 hover:underline">
+              {p.name} - {p.price}
+            </a>
+          </li>
         ))}
       </ul>
     </div>
-  )
+  );
 }

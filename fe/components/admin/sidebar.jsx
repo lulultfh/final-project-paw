@@ -17,7 +17,7 @@ export default function SidebarLayoutAdmin() {
   ];
 
   const secondaryNav = [
-    { label: "About Us", icon: "/about.svg", path: "/about-us" },
+    { label: "Logout", icon: "/logout.svg", path: "/" },
   ];
   return (
     <div className="flex rounded-lg min-h-screen sidebar-gradient">

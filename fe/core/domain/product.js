@@ -8,3 +8,9 @@
  * @property {number} stok
  * @property {'cake' | 'pastry' | 'bread' | 'cookies'} kategori
  */
+
+/**
+ * @typedef {Object} FormState
+ * @property {string} message
+ * @property {{ nameField?: string, priceField?: string }} [errors]
+ */
