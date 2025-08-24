@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const db = require("../database/db");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const JWT_SECRET = process.env.JWT_SECRET || "rahasiaSuper";
 
 router.get("/", (req, res) => {
   db.query("SELECT * FROM user", (err, results) => {
@@ -12,56 +14,65 @@ router.get("/", (req, res) => {
 
 router.get('/:id', (req, res) => {
     db.query('SELECT * FROM user WHERE id = ?', [req.params.id], (err, results) => {
-        if (err) return res.status(500).send('Internal Server Error');
-        if (results.length === 0) return res.status(404).send('User tidak ditemukan');
+        if (err) return res.status(500).json({message: 'Internal Server Error'});
+        if (results.length === 0) return res.status(404).json({message: 'User tidak ditemukan'});
         res.json(results[0]);
     });
 });
 
 router.post('/', (req, res) => {
-    const { nama, username, passwd, email, role, image } = req.body;
-    if (!nama || !username || !passwd || !email || !role || !image) {
-        return res.status(400).send('Semua kolom wajib diisi!');
+    const { nama, username, passwd, email, role} = req.body;
+    if (!nama || !username || !passwd || !email || !role) {
+        return res.status(400).json({ message: 'Semua kolom wajib diisi!'});
     }
+    
+    bcrypt.hash(passwd, 10, (err, hashedPassword) => {
+      if (err) {
+            // Handle jika hashing gagal
+            console.error('Error saat hashing password:', err);
+            return res.status(500).json({ message: "Server error" });
+      }
 
-    const query = 'INSERT INTO user (nama, username, passwd, email, role, image) VALUES (?, ?, ?, ?, ?, ?)';
-    const values = [nama.trim(), username.trim(), passwd.trim(), email.trim(), role.trim(), image.trim()];
+      const query = 'INSERT INTO user (nama, username, passwd, email, role) VALUES (?, ?, ?, ?, ?)';
+      const values = [nama.trim(), username.trim(), hashedPassword, email.trim(), role.trim()];
 
-    db.query(query, values, (err, results) => {
-        if (err) {
-            console.error('Database error:', err);
-            return res.status(500).send('Internal Server Error');
-        }
+      db.query(query, values, (err, results) => {
+          if (err) {
+              console.error('Database error:', err);
+              if (err.code === 'ER_DUP_ENTRY') {
+                return res.status(409).json({ message: 'Username atau Email sudah terdaftar.' });
+              }
+              return res.status(500).json({message: 'Internal Server Error'});
+          }
 
-        const newUser = {
-            id: results.insertId,
-            nama: nama.trim(),
-            username: username.trim(),
-            passwd: passwd.trim(),
-            email: email.trim(),
-            role: role.trim(),
-            image: image.trim()
-        };
-
-        res.status(201).json(newUser);
+          const newUser = {
+              id: results.insertId,
+              nama: nama.trim(),
+              username: username.trim(),
+              email: email.trim(),
+              role: role.trim()
+          };
+          console.log('User baru berhasil dibuat:', newUser); 
+          res.status(201).json(newUser);
+      });
     });
 });
 
 router.put('/:id', (req, res) => {
-    const { nama, username, passwd, email, role, image } = req.body;
+    const { nama, username, passwd, email, role} = req.body;
 
-    db.query('UPDATE user SET nama = ?, username = ?, passwd = ?, email = ?, role = ?, image = ? WHERE id = ?', [nama, username, passwd, email, role, image, req.params.id], (err, results) => {
-        if (err) return res.status(500).send('Internal Server Error');
-        if (results.affectedRows === 0) return res.status(404).send('User tidak ditemukan');
-        res.json({ id: req.params.id, nama, username, passwd, email, role, image });
+    db.query('UPDATE user SET nama = ?, username = ?, passwd = ?, email = ?, role = ? WHERE id = ?', [nama, username, passwd, email, role, req.params.id], (err, results) => {
+        if (err) return res.status(500).json({message: 'Internal Server Error'});
+        if (results.affectedRows === 0) return res.status(404).json({message: 'User tidak ditemukan'});
+        res.json({ id: req.params.id, nama, username, passwd, email, role});
     });
 });
 
 router.delete('/:id', (req, res) => {
     db.query('DELETE FROM user WHERE id = ?', [req.params.id], (err, results) => {
-        if (err) return res.status(500).send('Internal Server Error');
-        if (results.affectedRows === 0) return res.status(404).send('User tidak ditemukan');
-        res.status(204).send();
+        if (err) return res.status(500).json({message: 'Internal Server Error'});
+        if (results.affectedRows === 0) return res.status(404).json({message: 'User tidak ditemukan'});
+        res.status(204).json();
     });
 });
 
@@ -77,7 +88,7 @@ router.post("/login", (req, res) => {
     if (results.length === 0) return res.status(401).json({ message: "User tidak ditemukan" });
 
     const user = results[0];
-    const match = await bcrypt.compare(passwd, user.passwd);
+    const match = await bcrypt.compare(passwd, user.password);
 
     if (!match) {
       return res.status(401).json({ message: "Password salah!" });

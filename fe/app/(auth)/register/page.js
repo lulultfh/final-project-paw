@@ -25,15 +25,15 @@ export default function RegisterPage() {
     }
 
     try {
-      const res = await fetch('http://localhost:3001/api/user/register', { // Pastikan URL endpoint benar
+      const res = await fetch('http://localhost:3001/api/user', { // Pastikan URL endpoint benar
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           nama,
           username,
           email,
-          passwd,
-          role: 'user' // Atur role default ke 'user'
+          passwd: password,
+          role: 'cust' // Atur role default ke 'user'
         }),
       });
 
