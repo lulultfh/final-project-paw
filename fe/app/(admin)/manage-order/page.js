@@ -86,7 +86,7 @@ export default function ManageOrderPage() {
               {/* <th className="p-2">Order ID</th> */}
               <th className="p-2">Date Created</th>
               <th className="p-2">Status</th>
-              <th className="p-2">Mark as Finished</th>
+              <th className="p-2 text-center">Mark as Finished</th>
               <th className="p-2">Actions</th>
             </tr>
           </thead>
