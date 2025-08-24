@@ -83,7 +83,7 @@ export default function ManageOrderPage() {
         <table className="w-full border-collapse bg-white rounded-xl shadow-md">
           <thead>
             <tr className="bg-gray-200 text-left">
-              <th className="p-2">Order ID</th>
+              {/* <th className="p-2">Order ID</th> */}
               <th className="p-2">Date Created</th>
               <th className="p-2">Status</th>
               <th className="p-2">Mark as Finished</th>
@@ -93,9 +93,9 @@ export default function ManageOrderPage() {
           <tbody>
             {orders.map((order) => (
               <tr key={order.id} className="border-t">
-                <td className="p-2 font-semibold">#{order.id}</td>
+                {/* <td className="p-2 font-semibold">#{order.id}</td> */}
                 <td className="p-2 text-gray-600">
-                  {order.tangal ? formatDate(order.tangal) : 'No date'}
+                  {order.tanggal ? formatDate(order.tanggal) : 'No date'}
                 </td>
                 <td className="p-2">
                   <span
