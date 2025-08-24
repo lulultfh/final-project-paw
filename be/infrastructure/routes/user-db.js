@@ -24,7 +24,7 @@ router.post('/', (req, res) => {
         return res.status(400).send('Semua kolom wajib diisi!');
     }
 
-    const query = 'INSERT INTO user (nama, p username, passwd, email, role, image) VALUES (?, ?, ?, ?, ?, ?)';
+    const query = 'INSERT INTO user (nama, username, passwd, email, role, image) VALUES (?, ?, ?, ?, ?, ?)';
     const values = [nama.trim(), username.trim(), passwd.trim(), email.trim(), role.trim(), image.trim()];
 
     db.query(query, values, (err, results) => {
