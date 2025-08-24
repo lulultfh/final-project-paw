@@ -1,14 +1,20 @@
-"use client"
+"use client";
 import { useEffect, useState } from "react";
 import { getAllProducts } from "./action";
 
+/** @type {import("../domain/product").product[]} */
+const initialProducts = [];
+
 export default function ProductPage() {
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState(initialProducts);
 
   useEffect(() => {
     getAllProducts()
-      .then(data => setProducts(data))
-      .catch(err => console.error("Error fetch products:", err));
+      .then((data) => {
+        console.log("Products from API:", data);
+        setProducts(data);
+      })
+      .catch((err) => console.error("Error fetch products:", err));
   }, []);
 
   return (
@@ -17,8 +23,11 @@ export default function ProductPage() {
       <ul>
         {products.map((p) => (
           <li key={p.id}>
-            <a href={`/product/${p.id}`} className="text-blue-500 hover:underline">
-              {p.name} - {p.price}
+            <a
+              href={`/product/${p.id}`}
+              className="text-blue-500 hover:underline"
+            >
+              {p.namaProduct} - {p.price}
             </a>
           </li>
         ))}

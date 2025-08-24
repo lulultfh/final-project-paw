@@ -9,7 +9,7 @@ export async function getDataById(id) {
 }
 
 export async function getAllProducts() {
-  const res = await fetch("http://localhost:3001/api/products", {
+  const res = await fetch("http://localhost:3001/api/product", {
     cache: "no-store",
   });
   if (!res.ok) {
