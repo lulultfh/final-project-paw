@@ -24,7 +24,7 @@ export default function LoginPage() {
 
     try {
       // Endpoint API tetap, tapi body request diubah
-      const res = await fetch('http://localhost:3001/api/users/login', { 
+      const res = await fetch('http://localhost:3001/api/user/login', { 
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         // DIUBAH: mengirim `username` dan `passwd` sesuai permintaan backend
@@ -43,7 +43,7 @@ export default function LoginPage() {
       }
       
       // Arahkan ke halaman admin
-      router.push('/manage-order');
+      router.push('/');
 
     } catch (err) {
       setError(err.message);
