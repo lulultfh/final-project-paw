@@ -88,17 +88,16 @@ router.post("/login", (req, res) => {
     if (results.length === 0) return res.status(401).json({ message: "User tidak ditemukan" });
 
     const user = results[0];
-    const match = await bcrypt.compare(passwd, user.password);
+    const match = await bcrypt.compare(passwd, user.passwd);
 
     if (!match) {
       return res.status(401).json({ message: "Password salah!" });
     }
-
-    const token = jwt.sign(
-      { id: user.id, username: user.username, role: user.role }, 
-      JWT_SECRET,
-      { expiresIn: "3h" }
-    );
+      const token = jwt.sign(
+        { id: user.id, username: user.username, role: user.role }, 
+        JWT_SECRET,
+        { expiresIn: "3h" }
+      );
 
     res.json({ message: "Login berhasil", token });
   });
