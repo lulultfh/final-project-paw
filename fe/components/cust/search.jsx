@@ -3,6 +3,19 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { FiSearch, FiX } from "react-icons/fi";
+import { getAllProducts } from "@/app/(shop)/product/action";
+
+function debounce(fn, delay) {
+  let timeoutId;
+  return function(...args) {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
+    timeoutId = setTimeout(() => {
+      fn(...args);
+    }, delay);
+  };
+}
 
 export default function SearchBar() {
   const router = useRouter();
@@ -12,15 +25,23 @@ export default function SearchBar() {
   const [query, setQuery] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
   const [results, setResults] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
+
+  // Ambil semua produk untuk digunakan dalam pencarian
+  const [allProducts, setAllProducts] = useState([]);
+  useEffect(() => {
+    const fetchAllProducts = async () => {
+      const products = await getAllProducts();
+      setAllProducts(products);
+    };
+    fetchAllProducts();
+  }, []);
 
   const categories = ["Cake", "Pastry", "Bread", "Cookies"];
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (
-        containerRef.current &&
-        !containerRef.current.contains(event.target)
-      ) {
+      if (containerRef.current && !containerRef.current.contains(event.target)) {
         setShowDropdown(false);
       }
     };
@@ -30,16 +51,32 @@ export default function SearchBar() {
     };
   }, []);
 
+  const debouncedSearch = debounce(() => {
+    if (query.length > 0) {
+      setIsSearching(true);
+      const filteredResults = allProducts.filter(p =>
+        p.namaProduct.toLowerCase().includes(query.toLowerCase())
+      );
+      setResults(filteredResults.map(p => ({
+        id: p.id,
+        title: p.namaProduct,
+        type: p.kategori,
+        path: `/product/${p.id}`
+      })));
+      setIsSearching(false);
+    } else {
+      setResults([]);
+    }
+  }, 300);
+
   useEffect(() => {
-    const fetchResults = async () => {
-      if (query.length === 0) {
-        setResults([]);
-        return;
-      }
-      // fetch logic kalau mau searching beneran
-    };
-    fetchResults();
-  }, [query]);
+    debouncedSearch();
+  }, [query, allProducts]);
+
+  const handleCategoryClick = (category) => {
+    router.push(`/product?category=${category}`);
+    setShowDropdown(false);
+  };
 
   return (
     <div ref={containerRef} className="relative w-full my-4 md:my-0">
@@ -68,15 +105,18 @@ export default function SearchBar() {
 
       {showDropdown && (
         <div className="absolute top-full mt-2 w-full bg-white border border-gray-200 rounded-lg shadow-md z-50">
-          {query === "" ? (
+          {isSearching && query.length > 0 ? (
+            <p className="p-3 text-sm text-gray-500">Searching...</p>
+          ) : query === "" ? (
             <div className="p-3">
               <p className="text-sm font-semibold text-gray-600 mb-2">
                 Our Categories
               </p>
               <ul className="space-y-1">
-                {categories.map((item, i) => (
+                {categories.map((item) => (
                   <li
-                    key={i}
+                    key={item}
+                    onClick={() => handleCategoryClick(item)}
                     className="px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-100 rounded cursor-pointer"
                   >
                     {item}
@@ -89,7 +129,10 @@ export default function SearchBar() {
               {results.map((item, i) => (
                 <li
                   key={i}
-                  onClick={() => router.push(item.path)}
+                  onClick={() => {
+                    router.push(item.path);
+                    setShowDropdown(false);
+                  }}
                   className="px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-100 rounded cursor-pointer"
                 >
                   <span className="font-semibold text-blue-600 mr-2">
