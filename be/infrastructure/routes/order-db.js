@@ -3,11 +3,31 @@ const router = express.Router();
 const db = require("../database/db");
 
 router.get("/", (req, res) => {
-  db.query("SELECT * FROM `order`", (err, results) => {
-    if (err) return res.status(500).json({ error: err });
+  const query = `
+    SELECT
+        o.id,
+        o.status,
+        o.tanggal,
+        u.nama AS user_name,
+        SUM(oi.subtotal) AS total_price,
+        GROUP_CONCAT(p.namaProduct, ' (', oi.qty, ')' SEPARATOR ', ') AS products_summary
+    FROM \`order\` o
+    JOIN user u ON o.user_id = u.id
+    LEFT JOIN order_item oi ON o.id = oi.order_id
+    LEFT JOIN product p ON oi.product_id = p.id
+    GROUP BY o.id, u.nama, o.status, o.tanggal
+    ORDER BY o.tanggal DESC;
+  `;
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error fetching orders with details:", err);
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
     res.json(results);
   });
 });
+
 
 router.get('/:id', (req, res) => {
     db.query('SELECT * FROM `order` WHERE id = ?', [req.params.id], (err, results) => {
