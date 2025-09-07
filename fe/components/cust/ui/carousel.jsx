@@ -46,7 +46,7 @@ export default function Carousel() {
         ))}
       </div>
 
-      {/* Pagination */}
+      {/* Pagination
       <div className="flex justify-center gap-2 py-2">
         <a href="#c1" className="btn btn-xs">
           1
@@ -57,7 +57,7 @@ export default function Carousel() {
         <a href="#c3" className="btn btn-xs">
           3
         </a>
-      </div>
+      </div> */}
     </div>
   );
 }

@@ -1,3 +1,4 @@
+// app/(shop)/product/action.jsx
 export async function getDataById(id) {
   const res = await fetch(`http://localhost:3001/api/product/${id}`, {
     cache: "no-store",
@@ -18,6 +19,7 @@ export async function getAllProducts() {
   return res.json();
 }
 
+// ... createMenu tetap sama
 export async function createMenu(formData) {
   const headersList = {
     Accept: "*/*",
@@ -42,7 +44,7 @@ export async function createMenu(formData) {
 
   const bodyContent = JSON.stringify({ ...rawData, reviews: [] });
 
-  const res = await fetch("http://localhost:3001/api/products", {
+  const res = await fetch("http://localhost:3001/api/product", {
     method: "POST",
     body: bodyContent,
     headers: headersList,

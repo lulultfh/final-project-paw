@@ -2,9 +2,9 @@
 
 import React, { useState } from "react";
 import SearchBar from "./search";
-import ForYou from "./foryou";
-import ProductCard from "./ui/card";
 import CartCount from "./ui/cart-count";
+import ProductPage from "@/app/(shop)/product/page";
+import Carousel from "./ui/carousel"; // Import Carousel di sini
 
 export default function NavbarCustMenu() {
   const [activeTab, setActiveTab] = useState("ForYou");
@@ -15,24 +15,16 @@ export default function NavbarCustMenu() {
   ];
 
   return (
-    <div className="w-full bg-white border-b border-gray-200 shadow-sm">
+    <div className="w-full border-b border-gray-200">
       <div className="max-w-6xl mx-auto px-6 py-3">
         {/* Top Navbar */}
         <div className="flex items-center justify-between">
-          {/* Search */}
           <div className="flex-1">
             <SearchBar />
           </div>
-
-          {/* Right Section */}
           <div className="flex items-center space-x-6 ml-6">
-            {/* Cart */}
             <CartCount />
-
-            {/* Divider */}
-            <div className="h-6 w-px bg-gray-300"></div>
-
-            {/* Profile Avatar */}
+            <div className="h-6 w-px bg-[#72541B]"></div>
             <img
               src="https://i.pravatar.cc/40"
               alt="Profile"
@@ -61,14 +53,13 @@ export default function NavbarCustMenu() {
         {/* Content */}
         <div className="mt-6">
           {activeTab === "ForYou" && (
-            <div className="flex justify-center items-center min-h-screen">
-              <ForYou />
+            <div className="flex flex-col justify-start items-center">
+              <Carousel /> {/* Tampilkan Carousel di sini */}
+              <ProductPage limit={12} title="Customers Also Purchased" />
             </div>
           )}
           {activeTab === "Product" && (
-            <div className="flex justify-center items-center min-h-screen">
-              <ProductCard />
-            </div>
+            <ProductPage groupByCategory={true} />
           )}
         </div>
       </div>
