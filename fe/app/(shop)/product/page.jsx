@@ -1,43 +1,3 @@
-// "use client";
-// import { useEffect, useState } from "react";
-// import { getAllProducts } from "./action";
-
-// /** @type {import("../domain/product").product[]} */
-// const initialProducts = [];
-
-// export default function ProductPage() {
-//   const [products, setProducts] = useState(initialProducts);
-
-//   useEffect(() => {
-//     getAllProducts()
-//       .then((data) => {
-//         console.log("Products from API:", data);
-//         setProducts(data);
-//       })
-//       .catch((err) => console.error("Error fetch products:", err));
-//   }, []);
-
-//   return (
-//     <div className="p-4">
-//       <h1 className="text-2xl">Product List</h1>
-//       <ul>
-//         {products.map((p) => (
-//           <li key={p.id}>
-//             <a
-//               href={`/product/${p.id}`}
-//               className="text-blue-500 hover:underline"
-//             >
-//               {p.namaProduct} - {p.price}
-//             </a>
-//           </li>
-//         ))}
-//       </ul>
-//     </div>
-//   );
-// }
-
-
-// app/(shop)/product/page.jsx
 "use client";
 import { useEffect, useState } from "react";
 import { getAllProducts } from "./action";
@@ -78,10 +38,10 @@ export default function ProductPage() {
 
         <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
           {products.map((product) => (
-            <div key={product.id} className="group relative bg-[#F8D7D1] p-4 rounded-lg shadow-md  font-bold">
+            <div key={product.id} className="group relative bg-[#F8D7D1] p-4 rounded-lg shadow-md font-bold">
               <img
                 alt={product.namaProduct}
-                src={product.image}
+                src={`http://localhost:3001/api/product/image/${product.image}`}
                 className="aspect-square w-full rounded-md object-cover group-hover:opacity-75 lg:aspect-auto lg:h-50"
               />
               <div className="mt-4 flex justify-between">

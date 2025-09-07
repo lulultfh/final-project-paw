@@ -26,7 +26,7 @@ export default async function ProductPage({ params }) {
           {/* Image Section */}
           <div className="md:col-span-1">
             <img 
-              src={product.image} 
+              src={`http://localhost:3001/api/product/image/${product.image}`} 
               alt={product.namaProduct} 
               className="w-full h-full object-cover rounded-l-lg"
             />

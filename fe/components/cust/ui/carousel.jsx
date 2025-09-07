@@ -20,12 +20,12 @@ export default function Carousel() {
     return () => clearInterval(interval);
   }, [items.length]);
 
-  useEffect(() => {
-    const el = document.getElementById(items[index].id);
-    if (el && carouselRef.current) {
-      el.scrollIntoView({ behavior: "smooth", inline: "start" });
-    }
-  }, [index, items]);
+  // useEffect(() => {
+  //   const el = document.getElementById(items[index].id);
+  //   if (el && carouselRef.current) {
+  //     el.scrollIntoView({ behavior: "smooth", inline: "start" });
+  //   }
+  // }, [index, items]);
   return (
     <div className="flex flex-col items-center">
       {/* Carousel */}
