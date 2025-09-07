@@ -86,29 +86,30 @@ export default function SidebarLayoutAdmin() {
                 <p className="px-4 pt-4 font-medium text-gray-500"></p>
                 <ul>
                   {secondaryNav.map((item) => {
-                    const isActive = pathname === item.path;
                     return (
                       <li key={item.label}>
-                        <Link href={item.path}>
-                          <div
-                            className={`inline-flex items-center w-full px-4 py-2 mt-1 text-base font-semibold transition duration-300 transform rounded-lg
-                              ${
-                                isActive
-                                  ? "bg-[#B6BB79] text-black"
-                                  : "text-gray-900 hover:bg-[#B6BB79] hover:text-black"
-                              }
-                            `}
-                          >
-                            <Image
-                              src={item.icon}
-                              alt={item.label}
-                              width={20}
-                              height={20}
-                              className="w-5 h-5"
-                            />
-                            <span className="ml-4">{item.label}</span>
-                          </div>
-                        </Link>
+                        {/* ✅ Ubah ke button, tambahin onClick */}
+                        <button
+                          onClick={() => {
+                            // ✅ Tambahin ini buat hapus token
+                            localStorage.removeItem("authToken");
+                            localStorage.removeItem("token");
+                            localStorage.removeItem("user");
+
+                            // ✅ redirect ke halaman login/home
+                            window.location.href = "/";
+                          }}
+                          className="inline-flex items-center w-full px-4 py-2 mt-1 text-base font-semibold transition duration-300 transform rounded-lg text-gray-900 hover:bg-[#B6BB79] hover:text-black"
+                        >
+                          <Image
+                            src={item.icon}
+                            alt={item.label}
+                            width={20}
+                            height={20}
+                            className="w-5 h-5"
+                          />
+                          <span className="ml-4">{item.label}</span>
+                        </button>
                       </li>
                     );
                   })}
