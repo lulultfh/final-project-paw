@@ -11,7 +11,7 @@ export default function HomePage() {
     <div style={{ display: "flex" }}>
       <SidebarLayout />
       <div className="flex-1 flex flex-col justify-start items-start p-6">
-        <Carousel />
+        {/* <Carousel /> */}
         <ProductPage limit={12} title="Customers Also Purchased" />
       </div>
     </div>
