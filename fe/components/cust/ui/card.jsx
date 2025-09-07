@@ -1,67 +1,56 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Image from "next/image";
-/** @type {import("../domain/product").product[]} */
-const initialProducts = [];
 
-export default function ProductCard(){
-    const [products, setProducts] = useState(initialProducts);
+/** @typedef {import("../domain/product").product} product */
 
-  useEffect(() => {
-    getAllProducts()
-      .then((data) => {
-        console.log("Products from API:", data);
-        setProducts(data);
-      })
-      .catch((err) => console.error("Error fetch products:", err));
-  }, []);
+/**
+ * @param {{ products: product[], showCategoryTag?: boolean }} props
+ */
+export default function ProductCard({ products, showCategoryTag = false }) {
+  if (!products || products.length === 0) {
+    return (
+      <div className="flex justify-center items-center h-40 text-gray-500">
+        <p>Tidak ada produk yang ditemukan.</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="grid grid-cols-3 gap-3">
-      {products.map((p) => (
-        <div key={p.id} className="border rounded-xl p-3 shadow">
-          <div className="relative w-full h-40">
-            <Image
-              src={p.image}
-              alt={p.namaProduct}
-              fill
-              className="object-cover rounded-md"
-            />
-          </div>
-          <h2 className="card-title">{p.namaProduct}</h2>
-          <p className="text-gray-600">Rp {p.price}</p>
-          <p className="text-sm text-gray-500">{p.kategori}</p>
+    <div className="bg-white">
+      <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
+        <h2 className="sr-only">Products</h2>
+        
+        <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
+          {products.map((product) => (
+            <a key={product.id} href={`/product/${product.id}`} className="group relative">
+              <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-lg bg-[#F8D7D1] xl:aspect-h-8 xl:aspect-w-7">
+                <div className="relative h-48 w-full">
+                  <Image
+                    alt={product.namaProduct}
+                    src={product.image}
+                    fill
+                    sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                    className="h-full w-full object-cover object-center group-hover:opacity-75"
+                  />
+                  {/* Kondisi untuk menampilkan tag kategori */}
+                  {showCategoryTag && (
+                    <div className="absolute top-2 right-2 rounded-full bg-pink-400 px-3 py-1 text-xs font-semibold text-white">
+                      #{product.kategori.charAt(0).toUpperCase() + product.kategori.slice(1)}
+                    </div>
+                  )}
+                </div>
+              </div>
+              <h3 className="mt-4 text-sm text-gray-700">{product.namaProduct}</h3>
+              <p className="mt-1 text-lg font-medium text-gray-900">Rp {product.price}</p>
+            </a>
+          ))}
         </div>
-      ))}
+      </div>
     </div>
   );
 }
 
-{/* <div className="card bg-base-100 w-96 shadow-sm">
-  <figure className="px-10 pt-10">
-    <img
-      src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp"
-      alt="Shoes"
-      className="rounded-xl" />
-  </figure>
-  <div className="card-body items-center text-center">
-    <h2 className="card-title">Card Title</h2>
-    <p>A card component has a figure, a body part, and inside body there are title and actions parts</p>
-    <div className="card-actions">
-      <button className="btn btn-primary">Buy Now</button>
-    </div>
-  </div>
-</div> */}
-
-
-export default function CartCard(){
-    return(
-        <div className="flex flex-col-reserve">
-            <div>01</div>
-            <div>01</div>
-            <div>01</div>
-            <div>01</div>
-        </div>
-    )
+export default function ShoppingCard(){
+  return
 }

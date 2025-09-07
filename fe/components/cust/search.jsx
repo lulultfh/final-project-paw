@@ -1,24 +1,21 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/router";
 import { FiSearch, FiX } from "react-icons/fi";
 
-// type SearchResult = {
-//   id: string;
-//   title: string;
-//   type: "Bootcamp" | "Article" | "Post";
-//   path: string;
-// };
+export default function SearchBar() {
+  const router = useRouter();
+  const containerRef = useRef(null);
+  const inputRef = useRef(null);
 
-export default function Search() {
-    const router = useRouter();
-    const [query, setQuery] = useState("");
-    const [showDropdown, setShowDropdown] = useState(false);
+  const [query, setQuery] = useState("");
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [results, setResults] = useState([]);
 
-    const [results, setResults] = useState([]);
+  const categories = ["Cake", "Pastry", "Bread", "Cookies"];
 
-    useEffect(() => {
+  useEffect(() => {
     const handleClickOutside = (event) => {
       if (
         containerRef.current &&
@@ -33,14 +30,16 @@ export default function Search() {
     };
   }, []);
 
-  useEffect(()=> {
+  useEffect(() => {
     const fetchResults = async () => {
       if (query.length === 0) {
         setResults([]);
         return;
       }
+      // fetch logic kalau mau searching beneran
     };
-  })
+    fetchResults();
+  }, [query]);
 
   return (
     <div ref={containerRef} className="relative w-full my-4 md:my-0">
@@ -49,7 +48,7 @@ export default function Search() {
         <input
           ref={inputRef}
           type="text"
-          placeholder="Hi! What would you like to learn today?"
+          placeholder="Search your favorite bakery..."
           className="bg-transparent flex-1 outline-none text-sm text-gray-700 placeholder:text-gray-400"
           value={query}
           onFocus={() => setShowDropdown(true)}
@@ -72,10 +71,10 @@ export default function Search() {
           {query === "" ? (
             <div className="p-3">
               <p className="text-sm font-semibold text-gray-600 mb-2">
-                Trending Searches
+                Our Categories
               </p>
               <ul className="space-y-1">
-                {trending.map((item, i) => (
+                {categories.map((item, i) => (
                   <li
                     key={i}
                     className="px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-100 rounded cursor-pointer"

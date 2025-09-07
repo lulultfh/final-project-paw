@@ -1,6 +1,6 @@
 export async function getDataById(id) {
-  const res = await fetch(`http://localhost:3001/api/products/${id}`, {
-    cache: "no-store", // biar selalu fresh
+  const res = await fetch(`http://localhost:3001/api/product/${id}`, {
+    cache: "no-store",
   });
   if (!res.ok) {
     throw new Error("Failed to fetch product by id");
