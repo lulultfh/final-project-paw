@@ -33,6 +33,12 @@ export default function LoginPage() {
 
       const data = await res.json();
 
+      console.log('Data dari server:', data); 
+
+      if (!res.ok) {
+        throw new Error(data.message || 'Gagal login...');
+      }
+
       if (!res.ok) {
         throw new Error(data.message || 'Gagal login. Periksa kembali username dan password Anda.');
       }

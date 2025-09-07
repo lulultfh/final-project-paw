@@ -99,7 +99,7 @@ router.post("/login", (req, res) => {
         { expiresIn: "3h" }
       );
 
-    res.json({ message: "Login berhasil", token });
+    res.json({ message: "Login berhasil", token, role: user.role });
   });
 });
 
