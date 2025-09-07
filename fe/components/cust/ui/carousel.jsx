@@ -4,7 +4,7 @@ import Image from "next/image";
 
 export default function Carousel() {
   const carouselRef = useRef(null);
-  const [index, setIndex] = useState(0);
+  // const [index, setIndex] = useState(0);
 
   const items = [
     { id: "c1", src: "/carousel1.svg", alt: "Carousel 1" },

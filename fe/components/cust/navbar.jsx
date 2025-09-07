@@ -78,7 +78,8 @@ export default function NavbarCustMenu() {
           {activeTab === "ForYou" && (
             <div className="flex flex-col justify-start items-center">
               <Carousel />
-              <ProductPage limit={12} title="Customers Also Purchased" />
+              {/* Di sini Anda bisa menggunakan judul yang Anda inginkan */}
+              <ProductPage limit={12} title="Baked with love, served with joy" />
             </div>
           )}
           {activeTab === "Product" && (

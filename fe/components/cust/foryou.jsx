@@ -12,7 +12,7 @@ export default function HomePage() {
       <SidebarLayout />
       <div className="flex-1 flex flex-col justify-start items-start p-6">
         {/* <Carousel /> */}
-        <ProductPage limit={12} title="Customers Also Purchased" />
+        <ProductPage limit={12} title="Baked with love, served with joy" />
       </div>
     </div>
   );

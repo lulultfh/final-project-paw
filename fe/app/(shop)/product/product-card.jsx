@@ -12,7 +12,6 @@ export default function ProductCard({ product }) {
 
   return (
     <div key={product.id} className="group relative bg-[#F8D7D1] p-4 rounded-lg shadow-md font-bold">
-      {/* Ganti div dan Image dengan img biasa */}
       <img
         alt={product.namaProduct}
         src={`http://localhost:3001/api/product/image/${product.image}`}
