@@ -1,17 +1,11 @@
 import { Urbanist } from "next/font/google";
 import "./globals.css";
-// import type { Metadata } from "next";
-
+import { AuthProvider } from "./context/authContext";
 
 const urban = Urbanist({
   variable: "--font-urbanist-sans",
   subsets: ["latin"],
 });
-
-// const geistMono = Geist_Mono({
-//   variable: "--font-geist-mono",
-//   subsets: ["latin"],
-// });
 
 export const metadata = {
   title: "Butter&Bliss",
@@ -20,13 +14,14 @@ export const metadata = {
     icon: "/logo-text.svg",
   },
 };
+
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body
-        className={`${urban.variable} antialiased`}
-      >
-        {children}
+      <body className={`${urban.variable} antialiased`}>
+        <AuthProvider> {/* Bungkus aplikasi dengan AuthProvider */}
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );
