@@ -73,6 +73,21 @@ export default function ManageOrderPage() {
     });
   };
 
+  const formatCurrency = (number) => {
+    if (number === null || number === undefined) {
+      return 'Rp 0';
+    }
+    return new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      minimumFractionDigits: 0,
+    }).format(number);
+  };
+
+   useEffect(() => {
+    fetchOrders();
+  }, []);
+
   return (
     <div style={{ display: "flex" }}>
       <SidebarLayoutAdmin />
@@ -85,6 +100,9 @@ export default function ManageOrderPage() {
             <tr className="bg-gray-200 text-left">
               {/* <th className="p-2">Order ID</th> */}
               <th className="p-2">Date Created</th>
+              <th className="p-2">Customer Name</th>
+              <th className="p-2">Products</th>
+              <th className="p-2">Total Price</th>
               <th className="p-2">Status</th>
               <th className="p-2 text-center">Mark as Finished</th>
               <th className="p-2">Actions</th>
@@ -97,6 +115,11 @@ export default function ManageOrderPage() {
                 <td className="p-2 text-gray-600">
                   {order.tanggal ? formatDate(order.tanggal) : 'No date'}
                 </td>
+                <td className="p-2 font-medium">{order.user_name}</td>
+                <td className="p-2 text-gray-700 text-sm">
+                  {order.products_summary || 'No items'} {/* <-- DATA BARU */}
+                </td>
+                <td className="p-2 text-gray-800 font-semibold">{formatCurrency(order.total_price)}</td>
                 <td className="p-2">
                   <span
                     className={`px-3 py-1 rounded-full text-sm font-medium ${
