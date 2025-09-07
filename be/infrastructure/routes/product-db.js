@@ -250,8 +250,10 @@ router.delete('/:id', (req, res) => {
 // Route untuk serve gambar static
 router.get('/image/:filename', (req, res) => {
     const filename = req.params.filename;
-    const imagePath = path.join(__dirname, '../uploads/products/', filename);
+    const imagePath = path.join(__dirname, '..', '..', 'uploads', 'products', filename);
     
+    console.log('Mencari gambar di:', imagePath);
+
     if (fs.existsSync(imagePath)) {
         res.sendFile(path.resolve(imagePath));
     } else {

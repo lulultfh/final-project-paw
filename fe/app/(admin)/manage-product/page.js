@@ -418,7 +418,7 @@ export default function ManageProductPage() {
                           alt={product.namaProduct}
                           className="w-16 h-16 object-cover rounded-lg shadow-sm"
                           onError={(e) => {
-                            e.target.src = "/placeholder-image.png"; // Fallback image
+                            e.target.src = "/placeholder-image.svg"; // Fallback image
                           }}
                         />
                       </td>
