@@ -33,6 +33,12 @@ export default function LoginPage() {
 
       const data = await res.json();
 
+      console.log('Data dari server:', data); 
+
+      if (!res.ok) {
+        throw new Error(data.message || 'Gagal login...');
+      }
+
       if (!res.ok) {
         throw new Error(data.message || 'Gagal login. Periksa kembali username dan password Anda.');
       }
@@ -41,9 +47,13 @@ export default function LoginPage() {
       if (data.token) {
         localStorage.setItem('authToken', data.token);
       }
-      
-      // Arahkan ke halaman admin
-      router.push('/');
+
+      //pengecekan role
+      if (data.role === 'admin') {
+        router.push('/home-admin');
+      } else {
+        router.push('/');
+      }
 
     } catch (err) {
       setError(err.message);
