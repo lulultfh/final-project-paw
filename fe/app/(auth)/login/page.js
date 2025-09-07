@@ -41,9 +41,13 @@ export default function LoginPage() {
       if (data.token) {
         localStorage.setItem('authToken', data.token);
       }
-      
-      // Arahkan ke halaman admin
-      router.push('/');
+
+      //pengecekan role
+      if (data.role === 'admin') {
+        router.push('/home-admin');
+      } else {
+        router.push('/');
+      }
 
     } catch (err) {
       setError(err.message);
