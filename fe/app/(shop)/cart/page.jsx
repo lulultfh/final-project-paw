@@ -54,7 +54,7 @@ const CartPage = () => {
       <SidebarLayout />
 
       {/* Main Content */}
-      <div className="flex-1 p-6 flex flex-col gap-6 bg-gradient-to-br from-pink-100 via-rose-50 to-orange-50">
+      <div className="flex-1 p-6 flex flex-col gap-6">
         {/* HEADER */}
         <div className="flex justify-between items-center mb-4">
           <input
@@ -81,14 +81,14 @@ const CartPage = () => {
         <h2 className="text-3xl font-serif text-gray-700 mb-4">Cart</h2>
 
         {/* PILIH SEMUA + HAPUS */}
-        <div className="flex justify-between items-center bg-pink-50 px-4 py-2 rounded-lg border shadow-sm mb-4">
+        <div className="flex justify-between items-center font-bold bg-pink-50 px-4 py-2 rounded-lg border border-[#7D5A5A] shadow-sm mb-4">
           <label className="flex items-center gap-2">
             <input
               type="checkbox"
               checked={allSelected}
               onChange={(e) => toggleSelectAll(e.target.checked)}
             />
-            <span className="text-gray-700">Pilih semua</span>
+            <span className="text-[#7D5A5A]">Pilih semua</span>
           </label>
           <button
             onClick={deleteSelected}
@@ -105,7 +105,7 @@ const CartPage = () => {
             {items.map(item => (
               <div
                 key={item.id}
-                className="flex items-center justify-between bg-pink-100 p-4 rounded-lg shadow-sm border"
+                className="flex items-center justify-between border border-[#7D5A5A] bg-[#F8D7D1] p-4 rounded-lg shadow-[0_4px_4px_rgba(0,0,0,0.25)]"
               >
                 <div className="flex items-center gap-3">
                   <input
@@ -125,19 +125,19 @@ const CartPage = () => {
                 </div>
 
                 <div className="flex items-center gap-4">
-                  <p className="font-bold text-gray-700">
+                  <p className="font-bold text-[#7D5A5A]">
                     Rp{item.price.toLocaleString("id-ID")}
                   </p>
-                  <div className="flex items-center border rounded-full px-2 bg-white">
+                  <div className="flex items-center border rounded-full px-2 bg-[#FEFFF1]">
                     <button
-                      className="px-2 text-lg"
+                      className="px-2 text-[#7D5A5A] font-bold"
                       onClick={() => updateQuantity(item.id, "dec")}
                     >
                       –
                     </button>
-                    <span className="px-3">{item.quantity}</span>
+                    <span className="px-3 text-[#7D5A5A] font-bold">{item.quantity}</span>
                     <button
-                      className="px-2 text-lg"
+                      className="px-2 text-[#7D5A5A] font-bold"
                       onClick={() => updateQuantity(item.id, "inc")}
                     >
                       +
@@ -149,7 +149,7 @@ const CartPage = () => {
           </div>
 
           {/* RINGKASAN PESANAN */}
-          <div className="w-1/3 bg-pink-100 p-5 rounded-lg border shadow-sm h-fit">
+          <div className="w-1/3 bg-[#F8D7D1] p-5 rounded-lg border border-[#7D5A5A] shadow-[0_4px_4px_rgba(0,0,0,0.25)] h-fit">
             <h3 className="text-lg font-semibold mb-3">Ringkasan Pesanan</h3>
             <div className="flex justify-between mb-4">
               <span>Total</span>

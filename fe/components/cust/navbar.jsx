@@ -29,7 +29,9 @@ export default function NavbarCustMenu() {
           <div className="flex items-center space-x-6 ml-6">
             {isLoggedIn ? (
               <>
-                <CartCount />
+                <Link href="/cart">
+                  <CartCount />
+                </Link>
                 <div className="h-6 w-px bg-[#72541B]"></div>
                 <img
                   src="https://i.pravatar.cc/40"
