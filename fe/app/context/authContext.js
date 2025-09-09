@@ -4,10 +4,12 @@ import { createContext, useContext, useState, useEffect } from 'react';
 
 // Buat konteks otentikasi
 const AuthContext = createContext(null);
+import { useRouter } from 'next/navigation';
 
 export function AuthProvider({ children }) {
   // Gunakan state untuk melacak status login
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userToken, setUserToken] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
   // Gunakan useEffect untuk memeriksa status login dari localStorage saat aplikasi dimuat
@@ -16,11 +18,30 @@ export function AuthProvider({ children }) {
     if (token) {
       // Di sini Anda bisa memverifikasi token jika diperlukan
       setIsLoggedIn(true);
+      setUserToken(token);
     }
     setIsLoading(false);
   }, []);
 
-  const value = { isLoggedIn, setIsLoggedIn };
+    const login = (token) => {
+    localStorage.setItem('authToken', token); // Simpan token ke local storage
+    setUserToken(token);                     // Simpan token ke state
+    setIsLoggedIn(true);                     // Update status login
+  };
+
+  const logout = () => {
+    localStorage.removeItem('authToken');   // Hapus token dari local storage
+    setUserToken(null);                      // Hapus token dari state
+    setIsLoggedIn(false);      
+    router.push('/');              // Update status login
+  };
+
+   const value = {
+    isLoggedIn,
+    userToken, // Opsional, tapi sangat berguna untuk dimiliki
+    login,
+    logout,
+  };
 
   return (
     <AuthContext.Provider value={value}>

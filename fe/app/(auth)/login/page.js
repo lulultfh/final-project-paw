@@ -1,5 +1,6 @@
 "use client";
 
+import { useAuth } from "@/app/context/authContext";
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -9,6 +10,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const { login } = useAuth(); 
   const router = useRouter();
 
   const handleSubmit = async (e) => {
@@ -23,36 +25,29 @@ export default function LoginPage() {
     }
 
     try {
-      // Endpoint API tetap, tapi body request diubah
       const res = await fetch('http://localhost:3001/api/user/login', { 
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        // DIUBAH: mengirim `username` dan `passwd` sesuai permintaan backend
         body: JSON.stringify({ username: username, passwd: password }), 
       });
 
       const data = await res.json();
-
       console.log('Data dari server:', data); 
 
       if (!res.ok) {
-        throw new Error(data.message || 'Gagal login...');
-      }
-
-      if (!res.ok) {
+        // Jika respons tidak OK, langsung lempar error
         throw new Error(data.message || 'Gagal login. Periksa kembali username dan password Anda.');
       }
 
-      // Simpan token ke localStorage
       if (data.token) {
-        localStorage.setItem('authToken', data.token);
-      }
-
-      //pengecekan role
-      if (data.role === 'admin') {
-        router.push('/home-admin');
+        login(data.token);
+        if (data.role === 'admin') {
+          router.push('/home-admin');
+        } else {
+          router.push('/');
+        }
       } else {
-        router.push('/');
+        throw new Error('Login berhasil tetapi tidak ada token yang diterima.');
       }
 
     } catch (err) {
