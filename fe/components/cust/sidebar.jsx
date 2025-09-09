@@ -10,7 +10,7 @@ export default function SidebarLayout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
   const pathname = usePathname(); 
-  const { logout } = useAuth();
+  const { logout, isLoggedIn } = useAuth();
 
   const mainNav = [
     { label: "Home", icon: "/home.svg", path: "/" },
@@ -122,28 +122,29 @@ export default function SidebarLayout() {
                 </ul>
 
                 <p className="px-4 pt-4 font-medium text-gray-500"></p>
-                                <ul>
-                                  {thirdNav.map((item) => {
-                                    return (
-                                      <li key={item.label}>
-                                        {/* ✅ Ubah ke button, tambahin onClick */}
-                                        <button
-                                          onClick={logout}
-                                          className="inline-flex items-center w-full px-4 py-2 mt-1 text-base font-semibold transition duration-300 transform rounded-lg text-gray-900 hover:bg-[#B6BB79] hover:text-black"
-                                        >
-                                          <Image
-                                            src={item.icon}
-                                            alt={item.label}
-                                            width={20}
-                                            height={20}
-                                            className="w-5 h-5"
-                                          />
-                                          <span className="ml-4">{item.label}</span>
-                                        </button>
-                                      </li>
-                                    );
-                                  })}
-                                </ul>
+                  {isLoggedIn && (
+                      <ul>
+                        {thirdNav.map((item) => {
+                          return (
+                            <li key={item.label}>
+                              <button
+                                onClick={logout}
+                                className="inline-flex items-center w-full px-4 py-2 mt-1 text-base font-semibold transition duration-300 transform rounded-lg text-gray-900 hover:bg-[#B6BB79] hover:text-black"
+                              >
+                                <Image
+                                  src={item.icon}
+                                  alt={item.label}
+                                  width={20}
+                                  height={20}
+                                  className="w-5 h-5"
+                                />
+                                <span className="ml-4">{item.label}</span>
+                              </button>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    )}
               </nav>
             </div>
           </div>

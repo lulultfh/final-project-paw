@@ -3,11 +3,12 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 
 // Buat konteks otentikasi
-const AuthContext = createContext(null);
 import { useRouter } from 'next/navigation';
+const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   // Gunakan state untuk melacak status login
+  const router = useRouter();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userToken, setUserToken] = useState(null);
   const [isLoading, setIsLoading] = useState(true);

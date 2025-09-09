@@ -4,11 +4,13 @@ import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { useAuth } from "@/app/context/authContext";
 
 export default function SidebarLayoutAdmin() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
   const pathname = usePathname();
+  const { isLoggedIn, logout } = useAuth();
 
   const mainNav = [
     { label: "Home", icon: "/home.svg", path: "/home-admin" },
@@ -17,7 +19,7 @@ export default function SidebarLayoutAdmin() {
   ];
 
   const secondaryNav = [
-    { label: "Logout", icon: "/logout.svg", path: "/" },
+    { label: "Logout", icon: "/logout.svg" },
   ];
   return (
     <div className="flex rounded-lg min-h-screen sidebar-gradient">
@@ -84,36 +86,30 @@ export default function SidebarLayoutAdmin() {
                 </ul>
 
                 <p className="px-4 pt-4 font-medium text-gray-500"></p>
-                <ul>
-                  {secondaryNav.map((item) => {
-                    return (
-                      <li key={item.label}>
-                        {/* ✅ Ubah ke button, tambahin onClick */}
-                        <button
-                          onClick={() => {
-                            // ✅ Tambahin ini buat hapus token
-                            localStorage.removeItem("authToken");
-                            localStorage.removeItem("token");
-                            localStorage.removeItem("user");
-
-                            // ✅ redirect ke halaman login/home
-                            window.location.href = "/";
-                          }}
-                          className="inline-flex items-center w-full px-4 py-2 mt-1 text-base font-semibold transition duration-300 transform rounded-lg text-gray-900 hover:bg-[#B6BB79] hover:text-black"
-                        >
-                          <Image
-                            src={item.icon}
-                            alt={item.label}
-                            width={20}
-                            height={20}
-                            className="w-5 h-5"
-                          />
-                          <span className="ml-4">{item.label}</span>
-                        </button>
-                      </li>
-                    );
-                  })}
-                </ul>
+                {isLoggedIn && (
+                  <ul>
+                    {secondaryNav.map((item) => {
+                      return (
+                        <li key={item.label}>
+                          {/* Ganti semua logika manual dengan onClick={logout} */}
+                          <button
+                            onClick={logout} 
+                            className="inline-flex items-center w-full px-4 py-2 mt-1 text-base font-semibold transition duration-300 transform rounded-lg text-gray-900 hover:bg-[#B6BB79] hover:text-black"
+                          >
+                            <Image
+                              src={item.icon}
+                              alt={item.label}
+                              width={20}
+                              height={20}
+                              className="w-5 h-5"
+                            />
+                            <span className="ml-4">{item.label}</span>
+                          </button>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
               </nav>
             </div>
           </div>
