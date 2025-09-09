@@ -36,7 +36,7 @@ export default function TransactionPage() {
     }
   ];
 
-  const tabs = ['Status', 'All', 'Process', 'Finish'];
+  const tabs = ['All', 'Process', 'Finish'];
 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('id-ID', {
@@ -46,12 +46,19 @@ export default function TransactionPage() {
     }).format(amount).replace('IDR', 'Rp');
   };
 
+  const filteredTransactions = transactions.filter(transaction => {
+    if (activeTab === 'All') {
+      return true;
+    }
+    return transaction.status === activeTab;
+  });
+
   return (
     <div style={{ display: "flex" }}>
       <SidebarLayout />
       
       {/* Main Content */}
-      <div className="flex-1 min-h-screen bg-gradient-to-br from-pink-100 via-rose-50 to-orange-50">
+      <div className="flex-1 p-6 flex flex-col gap-6">
         {/* Header */}
         <div className="flex items-center justify-between p-6 pb-0">
           {/* Search Bar */}
@@ -113,7 +120,7 @@ export default function TransactionPage() {
 
           {/* Transaction List */}
           <div className="space-y-4">
-            {transactions.map((transaction) => (
+            {filteredTransactions.map((transaction) => (
               <div
                 key={transaction.id}
                 className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1"
@@ -153,7 +160,7 @@ export default function TransactionPage() {
                       </span>
                       <span className={`text-xs px-3 py-1 rounded-full font-medium ${
                         transaction.status === 'Finish' 
-                          ? 'bg-red-100 text-red-700'
+                          ? 'bg-red-100 text-green-700'
                           : 'bg-red-100 text-red-700'
                       }`}>
                         #{transaction.status}
