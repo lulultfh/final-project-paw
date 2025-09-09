@@ -1,16 +1,41 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import SidebarLayout from "@/components/cust/sidebar";
 import { ShoppingCart } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 const CartPage = () => {
-  const [items, setItems] = useState([
-    { id: 1, name: "Cookies", price: 25000, stock: 4, quantity: 2, selected: true },
-    { id: 2, name: "Cookies", price: 25000, stock: 4, quantity: 2, selected: false },
-    { id: 3, name: "Cookies", price: 25000, stock: 4, quantity: 2, selected: false },
-    { id: 4, name: "Cookies", price: 25000, stock: 4, quantity: 2, selected: false },
-  ]);
+  const [items, setItems] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    const fetchCartItems = async () => {
+      const orderId = localStorage.getItem('sessionOrderId');
+      if (!orderId) {
+        // Jika tidak ada orderId, keranjang kosong
+        setIsLoading(false);
+        return;
+      }
+      
+      try {
+        const res = await fetch(`http://localhost:3001/api/order-item?order_id=${orderId}`);
+        if (!res.ok) {
+          throw new Error("Failed to fetch cart items");
+        }
+        const data = await res.json();
+        setItems(data.map(item => ({ ...item, selected: true })));
+      } catch (err) {
+        setError("Failed to load cart. Please check API connection.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchCartItems();
+  }, []);
 
   // Toggle select per item
   const toggleSelect = (id) => {

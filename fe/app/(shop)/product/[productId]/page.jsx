@@ -1,14 +1,35 @@
-// app/(shop)/product/[productId]/page.jsx
+"use client";
+
 import { getDataById } from "../action";
+import { useEffect, useState } from "react";
+import Link from "next/link";
 
-export default async function ProductPage({ params }) {
+export default function ProductPage({ params }) {
   const { productId } = params;
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  let product;
-  try {
-    product = await getDataById(productId);
-  } catch (err) {
-    return <div className="p-4 text-center text-red-500">Error: Product not found.</div>;
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        const productData = await getDataById(productId);
+        setProduct(productData);
+      } catch (err) {
+        setError("Error: Product not found.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProduct();
+  }, [productId]);
+
+  if (loading) {
+    return <div className="p-4 text-center">Loading...</div>;
+  }
+
+  if (error) {
+    return <div className="p-4 text-center text-red-500">{error}</div>;
   }
 
   // Format harga ke Rupiah
@@ -38,9 +59,13 @@ export default async function ProductPage({ params }) {
             <p className="text-gray-600 mb-4">{product.description}</p>
             <p className="text-sm text-gray-500">Kategori: <span className="font-medium text-gray-700">{product.kategori}</span></p>
             <p className="text-sm text-gray-500">Stok: <span className="font-medium text-gray-700">{product.stok}</span></p>
-            <button className="mt-6 w-full py-3 px-4 bg-[#F3EBD8] text-[#7D5A5A] font-bold rounded-md hover:bg-[#F76079] hover:text-[#F3EBD8]">
-              Add to Cart
-            </button>
+            
+            {/* Bungkus tombol dengan Link */}
+            <Link href="/cart">
+              <button className="mt-6 w-full py-3 px-4 bg-[#F3EBD8] text-[#7D5A5A] font-bold rounded-md hover:bg-[#F76079] hover:text-[#F3EBD8]">
+                Add to Cart
+              </button>
+            </Link>
           </div>
         </div>
       </div>

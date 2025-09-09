@@ -38,13 +38,14 @@ router.get('/:id', (req, res) => {
 });
 
 router.post('/', (req, res) => {
-    const { status } = req.body;
-    if (!status) {
-        return res.status(400).send('Semua kolom wajib diisi!');
-    }
+    // Hapus baris validasi ini:
+    // const { status } = req.body;
+    // if (!status) {
+    //     return res.status(400).send('Semua kolom wajib diisi!');
+    // }
 
     const query = 'INSERT INTO `order` (status) VALUES (?)';
-    const values = [status.trim()];
+    const values = ['pending']; // Gunakan 'pending' secara default
 
     db.query(query, values, (err, results) => {
         if (err) {
@@ -54,7 +55,7 @@ router.post('/', (req, res) => {
 
         const newOrder = {
             id: results.insertId,
-            status: status.trim(),
+            status: 'pending',
             tangal: new Date()
         };
 
