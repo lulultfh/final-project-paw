@@ -5,7 +5,7 @@ import ProductCard from "./product-card";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from 'next/navigation'; // Tambahkan useRouter
 
-export default function ProductPage({ limit = null, groupByCategory = false, title = "All Products" }) {
+export default function ProductPage({ className, limit = null, groupByCategory = false, title = "All Products" }) {
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -105,8 +105,8 @@ export default function ProductPage({ limit = null, groupByCategory = false, tit
       <>
         {Object.keys(categories).map((kategori) => (
           <div key={kategori} className="mb-12">
-            <h2 className="text-2xl font-bold tracking-tight text-gray-900 mb-6">{kategori}</h2>
-            <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
+            <h2 className="text-[50px] font-second font-light italic text-[#878B5A] mb-6">{kategori}</h2>
+            <div className="mt-8 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
               {categories[kategori].map((product) => (
                 // Teruskan fungsi handleAddToCart ke ProductCard
                 <ProductCard key={product.id} product={product} onAddToCart={handleAddToCart} />
@@ -119,7 +119,7 @@ export default function ProductPage({ limit = null, groupByCategory = false, tit
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8 min-h-screen">
+    <div className={`py-16 sm:py-24 min-h-screen ${className}`}>
       {groupByCategory ? renderCategorizedProducts() : renderProductCards()}
     </div>
   );
