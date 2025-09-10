@@ -104,8 +104,8 @@ export default function ProductPage({ className, limit = null, groupByCategory =
     return (
       <>
         {Object.keys(categories).map((kategori) => (
-          <div key={kategori} className="mb-12">
-            <h2 className="text-[50px] font-second font-light italic text-[#878B5A] mt-[-8rem] mb-0">{kategori}</h2>
+          <div key={kategori} className="mb-0">
+            <h2 className="text-[50px] font-second font-light italic text-[#878B5A] mb-0">{kategori}</h2>
             <div className="mt-1 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
               {categories[kategori].map((product) => (
                 // Teruskan fungsi handleAddToCart ke ProductCard
@@ -119,7 +119,7 @@ export default function ProductPage({ className, limit = null, groupByCategory =
   };
 
   return (
-    <div className={`max-w-6xl mx-auto px-6 py-8 sm:py-24 min-h-screen ${className}`}>
+    <div className={`max-w-6xl mx-auto px-6 py-8 pt-8 sm:py-24 min-h-screen ${className}`}>
       {groupByCategory ? renderCategorizedProducts() : renderProductCards()}
     </div>
   );
