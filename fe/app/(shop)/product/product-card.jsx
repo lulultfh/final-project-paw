@@ -1,7 +1,9 @@
 import Link from "next/link";
 
+import { addToCart } from "./action";
+
 // Tambahkan onAddToCart di properti
-export default function ProductCard({ product, onAddToCart }) {
+export default function ProductCard({ product }) {
   const formattedPrice = new Intl.NumberFormat("id-ID", {
     style: "currency",
     currency: "IDR",
@@ -35,7 +37,7 @@ export default function ProductCard({ product, onAddToCart }) {
       
       {/* Ubah ini dari Link menjadi button biasa dan tambahkan onClick */}
       <button 
-        onClick={() => onAddToCart(product)} 
+        onClick={() => addToCart(product)} 
         className="w-full py-2 px-4 bg-[#F3EBD8] text-[#7D5A5A] font-bold rounded-md hover:bg-[#F76079] hover:text-[#F3EBD8]"
       >
         Add to Cart

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { ShoppingCart } from "lucide-react";
+//import { ShoppingCart } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 const CartPage = () => {
@@ -10,33 +10,64 @@ const CartPage = () => {
   const [error, setError] = useState(null);
   const router = useRouter();
 
-  useEffect(() => {
-    const fetchCartItems = async () => {
-      const orderId = localStorage.getItem("sessionOrderId");
-      if (!orderId) {
-        // Jika tidak ada orderId, keranjang kosong
+    useEffect(() => {
+    const initializeCart = async () => {
+      // 1. Ambil keranjang simpel dari localStorage (hanya ada product_id dan qty)
+      const storedCart = JSON.parse(localStorage.getItem("cart") || "[]");
+
+      if (storedCart.length === 0) {
         setIsLoading(false);
+        // Tidak perlu set error, cukup tampilkan keranjang kosong
         return;
       }
 
       try {
-        const res = await fetch(
-          `http://localhost:3001/api/order-item?order_id=${orderId}`
-        );
+        // 2. Ambil semua ID produk untuk diminta detailnya ke server
+        const productIds = storedCart.map((item) => item.product_id);
+
+        // 3. Fetch detail produk dari server menggunakan ID yang didapat
+        //    Gantilah dengan endpoint Anda yang sebenarnya
+        const res = await fetch(`http://localhost:3001/api/cart`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ids: productIds }),
+        });
+        
         if (!res.ok) {
-          throw new Error("Failed to fetch cart items");
+          throw new Error("Gagal mengambil detail produk dari server.");
         }
-        const data = await res.json();
-        setItems(data.map((item) => ({ ...item, selected: true })));
+        
+        const productsDetails = await res.json();
+
+        // 4. Gabungkan detail dari server dengan kuantitas dari localStorage
+        const detailedItems = productsDetails.map((product) => {
+          const cartItem = storedCart.find(item => item.product_id === product.id);
+          return {
+            ...product, // id, namaProduct, price, image, stok, dll.
+            quantity: cartItem ? cartItem.qty : 0,
+            selected: true, // Semua item terpilih secara default
+          };
+        }).filter(item => item.quantity > 0); // Pastikan hanya item valid yang ditampilkan
+
+        setItems(detailedItems);
       } catch (err) {
-        setError("Failed to load cart. Please check API connection.");
+        setError("Gagal memuat keranjang. Coba muat ulang halaman.");
+        console.error(err);
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchCartItems();
+    initializeCart();
   }, []);
+
+   const saveCartToLocalStorage = (updatedItems) => {
+    const simpleCart = updatedItems.map(item => ({
+      product_id: item.id,
+      qty: item.quantity
+    }));
+    localStorage.setItem('cart', JSON.stringify(simpleCart));
+  };
 
   // Toggle select per item
   const toggleSelect = (id) => {
@@ -54,22 +85,41 @@ const CartPage = () => {
 
   // Hapus item terpilih
   const deleteSelected = () => {
-    setItems(items.filter((item) => !item.selected));
+    const remainingItems = items.filter((item) => !item.selected);
+    setItems(remainingItems);
+    saveCartToLocalStorage(remainingItems); // Simpan perubahan
   };
 
-  // Update quantity
   const updateQuantity = (id, type) => {
-    setItems(
-      items.map((item) => {
-        if (item.id === id) {
-          let newQty = type === "inc" ? item.quantity + 1 : item.quantity - 1;
-          if (newQty < 1) newQty = 1;
-          if (newQty > item.stock) newQty = item.stock;
-          return { ...item, quantity: newQty };
-        }
-        return item;
-      })
-    );
+    const updatedItems = items.map((item) => {
+      if (item.id === id) {
+        let newQty = type === "inc" ? item.quantity + 1 : item.quantity - 1;
+        if (newQty < 1) newQty = 1;
+        if (newQty > item.stok) newQty = item.stok;
+        return { ...item, quantity: newQty };
+      }
+      return item;
+    });
+    setItems(updatedItems);
+    saveCartToLocalStorage(updatedItems); // Simpan perubahan
+  };
+
+  const handleCheckout = () => {
+    const selectedItems = items.filter(item => item.selected);
+    if (selectedItems.length === 0) {
+      alert("Pilih setidaknya satu produk untuk dibeli.");
+      return;
+    }
+  const checkoutItems = selectedItems.map(item => ({
+   product_id: item.id,
+   namaProduct: item.namaProduct,
+   price: item.price,
+   quantity: item.quantity,
+   image: item.image,
+ }));
+ localStorage.setItem('itemsForCheckout', JSON.stringify(checkoutItems));
+
+    router.push('/order');
   };
 
   const total = items
@@ -77,6 +127,10 @@ const CartPage = () => {
     .reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   const allSelected = items.length > 0 && items.every((item) => item.selected);
+
+  if (isLoading) return <div className="p-4 text-center">Loading Cart...</div>;
+  if (error) return <div className="p-4 text-center text-red-500">{error}</div>;
+  if (items.length === 0) return <div className="p-4 text-center">Keranjang Anda Kosong.</div>;
 
   return (
     <div className="flex min-h-screen">
@@ -123,14 +177,14 @@ const CartPage = () => {
                       onChange={() => toggleSelect(item.id)}
                     />
                     <img
-                      src="https://i.ibb.co/S0q4y1N/cookie.png"
-                      alt={item.name}
-                      className="w-16 h-16 rounded"
-                    />
+                    src={`http://localhost:3001/api/product/image/${item.image}`} // Gunakan `item.image`
+                    alt={item.namaProduct} // Gunakan `item.namaProduct`
+                    className="w-16 h-16 rounded"
+                  />
                     <div>
-                      <p className="text-sm text-gray-500">Sisa {item.stock}</p>
-                      <p className="font-semibold text-gray-700">{item.name}</p>
-                    </div>
+                    <p className="text-sm text-gray-500">Sisa {item.stok}</p>
+                    <p className="font-semibold text-gray-700">{item.namaProduct}</p>
+                  </div>
                   </div>
 
                   <div className="flex items-center gap-4">
@@ -168,8 +222,10 @@ const CartPage = () => {
                   Rp{total.toLocaleString("id-ID")}
                 </span>
               </div>
-              <button className="w-full bg-yellow-100 hover:bg-yellow-200 text-gray-800 font-semibold py-2 rounded-lg shadow">
-                Beli
+              <button 
+                onClick={handleCheckout}
+                className="w-full bg-yellow-100 hover:bg-yellow-200 text-gray-800 font-semibold py-2 rounded-lg shadow">
+                Beli ({items.filter(i => i.selected).length})
               </button>
             </div>
           </div>

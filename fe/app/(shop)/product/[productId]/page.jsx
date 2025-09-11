@@ -1,8 +1,9 @@
 "use client";
 
 import { getDataById } from "../action";
+import { addToCart } from "../action";
 import { useEffect, useState } from "react";
-import Link from "next/link";
+//import Link from "next/link";
 
 export default function ProductPage({ params }) {
   const { productId } = params;
@@ -23,6 +24,16 @@ export default function ProductPage({ params }) {
     };
     fetchProduct();
   }, [productId]);
+
+  // --- TAMBAHKAN INI ---
+  // Buat fungsi handler untuk tombol
+  const handleAddToCart = () => {
+    if (product) {
+      addToCart(product);
+      // Anda bisa menambahkan navigasi ke /cart di sini jika mau
+      // window.location.href = '/cart';
+    }
+  };
 
   if (loading) {
     return <div className="p-4 text-center">Loading...</div>;
@@ -61,11 +72,11 @@ export default function ProductPage({ params }) {
             <p className="text-sm text-gray-500">Stok: <span className="font-medium text-gray-700">{product.stok}</span></p>
             
             {/* Bungkus tombol dengan Link */}
-            <Link href="/cart">
-              <button className="mt-6 w-full py-3 px-4 bg-[#F3EBD8] text-[#7D5A5A] font-bold rounded-md hover:bg-[#F76079] hover:text-[#F3EBD8]">
-                Add to Cart
-              </button>
-            </Link>
+            <button 
+              onClick={handleAddToCart}
+              className="mt-6 w-full py-3 px-4 bg-[#F3EBD8] text-[#7D5A5A] font-bold rounded-md hover:bg-[#F76079] hover:text-[#F3EBD8]">
+              Add to Cart
+            </button>
           </div>
         </div>
       </div>

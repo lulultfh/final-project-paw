@@ -1,18 +1,18 @@
 "use client";
 import { useEffect, useState } from "react";
-import { getAllProducts, addToCart, createSessionOrder } from "./action";
+import { getAllProducts } from "./action";
 import ProductCard from "./product-card";
 import { useSearchParams } from "next/navigation";
-import { useRouter } from 'next/navigation'; // Tambahkan useRouter
+//import { useRouter } from 'next/navigation'; // Tambahkan useRouter
 
 export default function ProductPage({ className, limit = null, groupByCategory = false, title = "All Products" }) {
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [sessionOrderId, setSessionOrderId] = useState(null);
+  //const [sessionOrderId, setSessionOrderId] = useState(null);
   const searchParams = useSearchParams();
   const categoryParam = searchParams.get("category");
-  const router = useRouter(); // Inisiasi router
+  //const router = useRouter(); // Inisiasi router
 
   // const handleAddToCart = async (product) => {
   //   const res = await addToCart(product);
@@ -24,16 +24,16 @@ export default function ProductPage({ className, limit = null, groupByCategory =
   // };
 
   useEffect(() => {
-    const initSessionOrder = async () => {
-      let orderId = localStorage.getItem('sessionOrderId');
-      if (!orderId) {
-        orderId = await createSessionOrder();
-        if (orderId) {
-          localStorage.setItem('sessionOrderId', orderId);
-        }
-      }
-      setSessionOrderId(orderId);
-    };
+    // const initSessionOrder = async () => {
+    //   let orderId = localStorage.getItem('sessionOrderId');
+    //   if (!orderId) {
+    //     orderId = await createSessionOrder();
+    //     if (orderId) {
+    //       localStorage.setItem('sessionOrderId', orderId);
+    //     }
+    //   }
+    //   setSessionOrderId(orderId);
+    // };
 
     const fetchAndSetProducts = async () => {
       try {
@@ -48,19 +48,19 @@ export default function ProductPage({ className, limit = null, groupByCategory =
     fetchAndSetProducts();
   }, []);
 
-  const handleAddToCart = async (product) => {
-    if (!sessionOrderId) {
-      alert("Membuat pesanan sesi gagal. Coba muat ulang halaman.");
-      return;
-    }
+  // const handleAddToCart = async (product) => {
+  //   if (!sessionOrderId) {
+  //     alert("Membuat pesanan sesi gagal. Coba muat ulang halaman.");
+  //     return;
+  //   }
 
-    const res = await addToCart(product, sessionOrderId);
-    if (res.error) {
-      alert("Gagal menambahkan ke keranjang. Coba lagi.");
-    } else {
-      router.push('/cart');
-    }
-  };
+  //   const res = await addToCart(product, sessionOrderId);
+  //   if (res.error) {
+  //     alert("Gagal menambahkan ke keranjang. Coba lagi.");
+  //   } else {
+  //     router.push('/cart');
+  //   }
+  // };
 
   if (isLoading) {
     return <div className="p-4 text-center text-gray-500">Loading products...</div>;
@@ -85,7 +85,7 @@ export default function ProductPage({ className, limit = null, groupByCategory =
       <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
         {displayedProducts.map((product) => (
           // Teruskan fungsi handleAddToCart ke ProductCard
-          <ProductCard key={product.id} product={product} onAddToCart={handleAddToCart} />
+          <ProductCard key={product.id} product={product} />
         ))}
       </div>
     </>
@@ -109,7 +109,7 @@ export default function ProductPage({ className, limit = null, groupByCategory =
             <div className="mt-8 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
               {categories[kategori].map((product) => (
                 // Teruskan fungsi handleAddToCart ke ProductCard
-                <ProductCard key={product.id} product={product} onAddToCart={handleAddToCart} />
+                <ProductCard key={product.id} product={product} />
               ))}
             </div>
           </div>
