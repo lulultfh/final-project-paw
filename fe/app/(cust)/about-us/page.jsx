@@ -18,7 +18,7 @@ export default function AboutPage() {
           <h2 className="text-5xl font-bold text-[#171717] mb-8">About Us</h2>
           <div className="flex flex-col md:flex-row items-center gap-8 md:gap-12">
             <img
-              src="/cewek-standar.png"
+              src="/cewek-about.png"
               alt="Maskot Butter & Bliss"
               className="w-80 h-80 object-cover"
             />
@@ -51,7 +51,7 @@ export default function AboutPage() {
             {/* Mascot */}
             <div className="flex-shrink-0 hidden md:block">
               <img
-                src="/cowok-standar-1.png"
+                src="/cowok-map.png"
                 alt="Maskot Butter & Bliss - cowok"
                 className="w-80 h-auto"
               />
