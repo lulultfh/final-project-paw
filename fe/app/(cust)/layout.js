@@ -13,7 +13,7 @@ export default function RootLayout({ children }) {
             <SidebarLayout />
 
             {/* Konten utama */}
-            <div className="flex-1 flex flex-col p-6">
+            <div className="flex-1 flex flex-col p-5">
               <NavbarCustMenu />
               <main className="flex-1 w-full">
                 {children}
