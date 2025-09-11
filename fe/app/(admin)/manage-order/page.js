@@ -14,7 +14,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import SidebarLayoutAdmin from "@/components/admin/sidebar";
 
 export default function ManageOrderPage() {
   const [orders, setOrders] = useState([]);
@@ -90,7 +89,7 @@ export default function ManageOrderPage() {
 
   return (
     <div style={{ display: "flex" }}>
-      <SidebarLayoutAdmin />
+      {/* <SidebarLayoutAdmin /> */}
       <div className="flex-1 p-6">
         <h1 className="text-2xl font-bold mb-4">Manage Orders</h1>
 

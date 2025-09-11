@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { FiSearch, FiX } from "react-icons/fi";
-import { getAllProducts } from "@/app/(shop)/product/action";
+import { getAllProducts } from "@/app/(cust)/(shop)/product/action";
 
 function debounce(fn, delay) {
   let timeoutId;

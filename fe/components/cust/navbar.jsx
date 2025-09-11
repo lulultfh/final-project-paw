@@ -4,7 +4,7 @@
 import React, { useState } from "react";
 import SearchBar from "./search";
 import CartCount from "./ui/cart-count";
-import ProductPage from "@/app/(shop)/product/page";
+import ProductPage from "@/app/(cust)/(shop)/product/page";
 import Carousel from "./ui/carousel";
 import Link from "next/link";
 import { useAuth } from "@/app/context/authContext";
