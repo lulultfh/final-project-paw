@@ -39,8 +39,8 @@ export default function LoginPage() {
         throw new Error(data.message || 'Gagal login. Periksa kembali username dan password Anda.');
       }
 
-      if (data.token) {
-        login(data.token);
+      if (data.token && data.user) {
+        login(data.token, data.user);
         if (data.role === 'admin') {
           router.push('/home-admin');
         } else {

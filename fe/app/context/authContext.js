@@ -12,27 +12,39 @@ export function AuthProvider({ children }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userToken, setUserToken] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [userData, setUserData] = useState(null);
 
   // Gunakan useEffect untuk memeriksa status login dari localStorage saat aplikasi dimuat
   useEffect(() => {
     const token = localStorage.getItem('authToken');
-    if (token) {
-      // Di sini Anda bisa memverifikasi token jika diperlukan
-      setIsLoggedIn(true);
-      setUserToken(token);
+    const userJSON = localStorage.getItem('user');
+    if (token && userJSON) {
+      try {
+        const user = JSON.parse(userJSON);
+        setIsLoggedIn(true);
+        setUserToken(token);
+        setUserData(user); // ← isi state userData
+      } catch (e) {
+        console.error("Gagal parsing user data:", e);
+        logout(); // opsional: logout jika data corrupt
+      }
     }
     setIsLoading(false);
   }, []);
 
-    const login = (token) => {
+    const login = (token, user) => {
     localStorage.setItem('authToken', token); // Simpan token ke local storage
+    localStorage.setItem('user', JSON.stringify(user));
     setUserToken(token);                     // Simpan token ke state
+    setUserData(user);
     setIsLoggedIn(true);                     // Update status login
   };
 
   const logout = () => {
     localStorage.removeItem('authToken');   // Hapus token dari local storage
+    localStorage.removeItem('user');
     setUserToken(null);                      // Hapus token dari state
+    setUserData(null);
     setIsLoggedIn(false);      
     router.push('/');              // Update status login
   };
@@ -40,6 +52,7 @@ export function AuthProvider({ children }) {
    const value = {
     isLoggedIn,
     userToken, // Opsional, tapi sangat berguna untuk dimiliki
+    userData, // Data user lengkap
     login,
     logout,
   };

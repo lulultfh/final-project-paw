@@ -99,7 +99,15 @@ router.post("/login", (req, res) => {
         { expiresIn: "3h" }
       );
 
-    res.json({ message: "Login berhasil", token, role: user.role });
+    res.json({ message: "Login berhasil", 
+      token,
+      user: {
+        id: user.id,
+        name: user.nama,       // ← perhatikan: di DB kolomnya "nama", bukan "name"
+        username: user.username,
+        role: user.role
+      } 
+    });
   });
 });
 
