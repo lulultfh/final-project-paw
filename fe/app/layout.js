@@ -1,8 +1,6 @@
 import { Urbanist } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "./context/authContext";
-import SidebarLayout from "@/components/cust/sidebar";
-import NavbarCustMenu from "@/components/cust/navbar";
 
 const urban = Urbanist({
   variable: "--font-urbanist-sans",
@@ -23,18 +21,9 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className={`${urban.variable} antialiased`}>
         <AuthProvider>
-          <div className="flex">
-            {/* Sidebar */}
-            <SidebarLayout />
-
-            {/* Konten utama */}
-            <div className="flex-1 flex flex-col p-6">
-              <NavbarCustMenu />
-              <main className="flex-1 w-full">
-                {children}
-              </main>
-            </div>
-          </div>
+          <main className="flex-1 w-full p-6">
+            {children}
+          </main>
         </AuthProvider>
       </body>
     </html>

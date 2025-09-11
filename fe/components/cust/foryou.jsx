@@ -4,7 +4,7 @@
 // import Navbar from "../components/navbar"; // Ini bisa dihapus jika tidak digunakan
 import SidebarLayout from "@/components/cust/sidebar";
 import Carousel from "@/components/cust/ui/carousel";
-import ProductPage from "@/app/(shop)/product/page";
+import ProductPage from "@/app/(cust)/(shop)/product/page";
 
 export default function HomePage() {
   return (
