@@ -1,10 +1,7 @@
-"use client"; // Diperlukan karena kita menggunakan hooks seperti useState dan useEffect
+"use client";
 
 import React, { useState, useEffect } from 'react';
-// --> CATATAN: Baris di bawah ini sengaja dinonaktifkan untuk perbaikan.
-// --> Aktifkan kembali di proyek Next.js Anda dan pastikan path-nya benar.
 import { useAuth } from '@/app/context/authContext';
-// import { useRouter } from 'next/navigation';
 
 export default function OrderPage() {
     const [paymentProofFile, setPaymentProofFile] = useState(null);
@@ -15,17 +12,13 @@ export default function OrderPage() {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null); 
 
-    // --> CATATAN: Baris di bawah ini sengaja dinonaktifkan untuk perbaikan.
-    // --> Aktifkan kembali di proyek Anda untuk mendapatkan data user dan fungsi navigasi.
     const { userToken, userData } = useAuth();
-    // const router = useRouter();
-
 
     useEffect(() => {
         const itemsJSON = localStorage.getItem('itemsForCheckout');
         
-        if (!itemsJSON || !userData) {
-            setError("Tidak ada item untuk di-checkout atau Anda belum login.");
+        if (!itemsJSON) {
+            setError("Tidak ada item untuk di-checkout.");
             setIsLoading(false);
             return;
         }
@@ -33,30 +26,43 @@ export default function OrderPage() {
         try {
             const items = JSON.parse(itemsJSON);
             if (items.length === 0) {
-                 setError("Keranjang checkout Anda kosong.");
-                 setIsLoading(false);
-                 return;
+                setError("Keranjang checkout Anda kosong.");
+                setIsLoading(false);
+                return;
             }
 
-            // 2. Set state dengan data dari localStorage dan Auth Context
-            setItemsToCheckout(items);
-            setUser(userData);
+            // ✅ Konversi ke number dan filter item valid
+            const parsedItems = items.map(item => ({
+                ...item,
+                product_id: Number(item.product_id),
+                price: Number(item.price),
+                quantity: Number(item.quantity)
+            })).filter(item => 
+                !isNaN(item.price) && 
+                !isNaN(item.quantity) && 
+                item.quantity > 0 &&
+                item.price >= 0
+            );
 
-            // 3. Hitung total harga
-            const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
-            setTotalPrice(total);
+            if (parsedItems.length === 0) {
+                setError("Data produk tidak valid.");
+                setIsLoading(false);
+                return;
+            }
+
+            setItemsToCheckout(parsedItems);
+            setTotalPrice(parsedItems.reduce((sum, item) => sum + item.price * item.quantity, 0));
+
+            if (userData) {
+                setUser(userData);
+            }
 
         } catch (err) {
             setError("Data keranjang checkout tidak valid.");
         } finally {
             setIsLoading(false);
         }
-    }, [userData]); // useEffect akan dijalankan jika userData berubah
-
-    useEffect(() => {
-    return () => {
-    };
-  }, []);
+    }, [userData]);
 
     const handleFileChange = (event) => {
         const file = event.target.files[0];
@@ -73,7 +79,24 @@ export default function OrderPage() {
             alert('Harap unggah bukti pembayaran Anda terlebih dahulu.');
             return;
         }
-        
+
+        const userId = user?.id || userData?.id;
+        if (!userId) {
+            alert("Data user tidak ditemukan. Silakan login ulang.");
+            return;
+        }
+
+        // ✅ Validasi item sebelum kirim
+        const invalidItems = itemsToCheckout.filter(item => 
+            isNaN(item.price) || isNaN(item.quantity) || item.quantity <= 0 || item.price < 0
+        );
+
+        if (invalidItems.length > 0) {
+            console.error("Item tidak valid:", invalidItems);
+            alert("Ada data produk yang tidak valid. Silakan refresh halaman atau coba lagi.");
+            return;
+        }
+
         const formData = new FormData();
         const itemsPayload = itemsToCheckout.map(item => ({
             product_id: item.product_id,
@@ -81,18 +104,18 @@ export default function OrderPage() {
             subtotal: item.price * item.quantity
         }));
 
-        formData.append('user_id', user.id);
-        //formData.append('status', 'process');
+        // ✅ Debug
+        console.log("Mengirim order dengan items:", itemsPayload);
+
+        formData.append('user_id', userId);
         formData.append('paymentProof', paymentProofFile);
         formData.append('items', JSON.stringify(itemsPayload)); 
 
         try {
-            // 2. Kirim data ke endpoint /api/order
             const response = await fetch('http://localhost:3001/api/order', {
                 method: 'POST',
-                // Untuk FormData, jangan set 'Content-Type' secara manual
                 headers: { 
-                    'Authorization': `Bearer ${userToken}` // Jika backend butuh otorisasi
+                    'Authorization': `Bearer ${userToken}`
                 },
                 body: formData,
             });
@@ -102,17 +125,15 @@ export default function OrderPage() {
                 throw new Error(errorData.message || 'Gagal membuat pesanan.');
             }
             
-            // 3. Jika berhasil, bersihkan localStorage dan redirect
             alert('Konfirmasi pembayaran berhasil! Pesanan Anda sedang diproses.');
             localStorage.removeItem('itemsForCheckout');
             
-            // 2. Hapus item yang sudah dibeli dari keranjang utama
-        const currentCart = JSON.parse(localStorage.getItem('cart') || '[]');
-        const itemsToRemove = itemsToCheckout.map(item => item.product_id);
-        const newCart = currentCart.filter(item => !itemsToRemove.includes(item.product_id));
-        localStorage.setItem('cart', JSON.stringify(newCart));
+            const currentCart = JSON.parse(localStorage.getItem('cart') || '[]');
+            const itemsToRemove = itemsToCheckout.map(item => item.product_id);
+            const newCart = currentCart.filter(item => !itemsToRemove.includes(item.product_id));
+            localStorage.setItem('cart', JSON.stringify(newCart));
 
-        window.location.href = '/transaction';
+            window.location.href = '/transaction';
 
         } catch (error) {
             console.error('Error:', error);
@@ -135,7 +156,9 @@ export default function OrderPage() {
 
                     <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-8 shadow-sm">
                         <h2 className="text-2xl font-semibold border-b pb-4 mb-6">Pelanggan</h2>
-                        <p className="text-gray-700 text-lg">{user ? user.name : 'Memuat...'}</p>
+                        <p className="text-gray-700 text-lg">
+                            {user ? user.name : userData ? userData.name : 'Memuat data user...'}
+                        </p>
                     </div>
 
                     <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-8 shadow-sm">
