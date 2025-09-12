@@ -21,7 +21,7 @@ export default function ManageOrderPage() {
   // Ambil data order dari backend
   const fetchOrders = async () => {
     try {
-      const res = await fetch("http://localhost:3001/api/order");
+      const res = await fetch("http://localhost:3001/api/order/admin");
       const data = await res.json();
       setOrders(data);
     } catch (err) {
@@ -30,7 +30,7 @@ export default function ManageOrderPage() {
   };
 
   useEffect(() => {
-    fetch("http://localhost:3001/api/order")
+    fetch("http://localhost:3001/api/order/admin")
       .then((res) => res.json())
       .then((data) => setOrders(data))
       .catch((err) => console.error("Error fetching orders:", err));
@@ -102,6 +102,7 @@ export default function ManageOrderPage() {
               <th className="p-2">Customer Name</th>
               <th className="p-2">Products</th>
               <th className="p-2">Total Price</th>
+              <th className="p-2">Payment Proof</th>
               <th className="p-2">Status</th>
               <th className="p-2 text-center">Mark as Finished</th>
               <th className="p-2">Actions</th>
@@ -114,11 +115,36 @@ export default function ManageOrderPage() {
                 <td className="p-2 text-gray-600">
                   {order.tanggal ? formatDate(order.tanggal) : 'No date'}
                 </td>
-                <td className="p-2 font-medium">{order.user_name}</td>
+                <td className="p-2 font-medium">{order.customer_name}</td>
                 <td className="p-2 text-gray-700 text-sm">
                   {order.products_summary || 'No items'} {/* <-- DATA BARU */}
                 </td>
                 <td className="p-2 text-gray-800 font-semibold">{formatCurrency(order.total_price)}</td>
+                <td className="p-2">
+                  {order.bukti_bayar ? (
+                    <div className="flex flex-col space-y-1 md:flex-row md:space-y-0 md:space-x-1">
+                      {/* Tombol Open */}
+                      <a
+                        href={`http://localhost:3001/uploads/${order.bukti_bayar}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-center bg-blue-500 text-white px-2 py-1 text-xs rounded hover:bg-blue-600 transition-colors"
+                      >
+                        Open
+                      </a>
+                      {/* Tombol Download */}
+                      <a
+                        href={`http://localhost:3001/api/order/admin/download/${order.bukti_bayar}`}
+                        download
+                        className="text-center bg-gray-500 text-white px-2 py-1 text-xs rounded hover:bg-gray-600 transition-colors"
+                      >
+                        Download
+                      </a>
+                    </div>
+                  ) : (
+                    <span className="text-xs text-gray-400">No proof</span>
+                  )}
+                </td>
                 <td className="p-2">
                   <span
                     className={`px-3 py-1 rounded-full text-sm font-medium ${

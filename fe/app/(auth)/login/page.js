@@ -41,7 +41,7 @@ export default function LoginPage() {
 
       if (data.token && data.user) {
         login(data.token, data.user);
-        if (data.role === 'admin') {
+        if (data.user.role === 'admin') {
           router.push('/home-admin');
         } else {
           router.push('/');

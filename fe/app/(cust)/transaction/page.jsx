@@ -1,42 +1,48 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ShoppingCart } from "lucide-react";
 
 export default function TransactionPage() {
   const [activeTab, setActiveTab] = useState("All");
+  const [transactions, setTransactions] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const transactions = [
-    {
-      id: 1,
-      type: "Shop",
-      date: "12 Aug 25",
-      status: "Finish",
-      product: {
-        name: "Cheese Cake",
-        image: "/api/placeholder/60/60",
-        quantity: 2,
-        price: 26000,
-        total: 52000,
-      },
-    },
-    {
-      id: 2,
-      type: "Shop",
-      date: "12 Aug 25",
-      status: "Process",
-      product: {
-        name: "Cheese Cake",
-        image: "/api/placeholder/60/60",
-        quantity: 2,
-        price: 26000,
-        total: 52000,
-      },
-    },
-  ];
+  useEffect(() => {
+    // 1. Ambil data user yang login dari localStorage
+    // Saya berasumsi Anda menyimpan info user dengan key 'user' setelah login
+    const loggedInUser = JSON.parse(localStorage.getItem('user'));
+
+    // 2. Jika tidak ada user yang login, jangan lakukan apa-apa
+    if (!loggedInUser) {
+      setError("Anda harus login untuk melihat riwayat transaksi.");
+      setIsLoading(false);
+      return;
+    }
+
+    const fetchTransactions = async () => {
+      try {
+        // 3. Tambahkan userId sebagai query parameter di URL fetch
+        const response = await fetch(`/api/order?userId=${loggedInUser.id}`);
+        if (!response.ok) {
+          throw new Error("Gagal mengambil data dari server");
+        }
+        const data = await response.json();
+        setTransactions(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchTransactions();
+  }, []); // Array dependensi kosong agar useEffect hanya berjalan sekali
 
   const tabs = ["All", "Process", "Finish"];
 
+  // Fungsi format mata uang tetap sama
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat("id-ID", {
       style: "currency",
@@ -47,11 +53,26 @@ export default function TransactionPage() {
       .replace("IDR", "Rp");
   };
 
-  const filteredTransactions = transactions.filter((transaction) => {
+  // Fungsi untuk format tanggal dari API
+  const formatDate = (dateString) => {
+    const options = { day: "numeric", month: "short", year: "2-digit" };
+    // Menggunakan en-GB agar formatnya DD Mon YY (e.g., 12 Aug 25)
+    return new Date(dateString).toLocaleDateString("en-GB", options);
+  };
+
+  // Fungsi untuk mengubah huruf pertama menjadi kapital (misal: "process" -> "Process")
+  const capitalizeFirstLetter = (string) => {
+    if (!string) return "";
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  };
+
+  // Transformasi dan filter data
+  const filteredTransactions = transactions.filter((order) => {
+    const orderStatus = capitalizeFirstLetter(order.status);
     if (activeTab === "All") {
       return true;
     }
-    return transaction.status === activeTab;
+    return orderStatus === activeTab;
   });
 
   return (
@@ -79,77 +100,75 @@ export default function TransactionPage() {
           ))}
         </div>
 
-        {/* Transaction List */}
-        <div className="space-y-4">
-          {filteredTransactions.map((transaction) => (
-            <div
-              key={transaction.id}
-              className="w-full bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1"
-            >
-              <div className="flex items-center space-x-5">
-                {/* Transaction Icon */}
-                <div className="bg-gray-100 p-2 rounded-lg">
-                  <ShoppingCart className="h-5 w-5 text-gray-600" />
-                </div>
-
-                {/* Product Image */}
-                <div className="flex-shrink-0">
-                  <img
-                    src={transaction.product.image}
-                    alt={transaction.product.name}
-                    className="w-16 h-16 rounded-lg object-cover bg-amber-100"
-                    onError={(e) => {
-                      e.target.src =
-                        "data:image/svg+xml," +
-                        encodeURIComponent(`
-                        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
-                          <rect width="64" height="64" fill="#f4e6d1"/>
-                          <path d="M16 48 L48 48 L45 27 L19 27 Z" fill="#e6d2a3"/>
-                          <ellipse cx="32" cy="37" rx="13" ry="9" fill="#fff8e1"/>
-                        </svg>
-                      `);
-                    }}
-                  />
-                </div>
-
-                {/* Transaction Info */}
-                <div className="flex-1">
-                  <div className="flex items-center space-x-3 mb-2">
-                    <span className="text-sm text-black font-bold">
-                      {transaction.type}
-                    </span>
+        <div className="space-y-6">
+          {isLoading ? (
+            <p>Loading transactions...</p>
+          ) : error ? (
+            <p className="text-red-500">Error: {error}</p>
+          ) : filteredTransactions.length > 0 ? (
+            filteredTransactions.map((order) => (
+              <div
+                key={order.id}
+                className="w-full bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-sm"
+              >
+                <div className="flex justify-between items-center mb-4 border-b pb-3">
+                  <div className="flex items-center space-x-3">
+                    <span className="text-sm text-black font-bold">Shop</span>
                     <span className="text-xs text-gray-400">
-                      {transaction.date}
+                      {formatDate(order.tanggal)}
                     </span>
                     <span
                       className={`text-xs px-3 py-1 rounded-full font-medium ${
-                        transaction.status === "Finish"
+                        capitalizeFirstLetter(order.status) === "Finish"
                           ? "bg-green-100 text-green-700"
-                          : "bg-red-100 text-red-700"
+                          : "bg-yellow-100 text-yellow-700"
                       }`}
                     >
-                      #{transaction.status}
+                      #{capitalizeFirstLetter(order.status)}
                     </span>
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-1">
-                    {transaction.product.name}
-                  </h3>
-                  <p className="text-sm text-gray-600">
-                    {transaction.product.quantity} barang x{" "}
-                    {formatCurrency(transaction.product.price)}
-                  </p>
+                  <div className="text-right">
+                    <p className="text-xs text-gray-400">Total Belanja</p>
+                    <p className="text-lg font-semibold text-gray-900">
+                      {formatCurrency(order.total_price)}
+                    </p>
+                  </div>
                 </div>
-
-                {/* Amount */}
-                <div className="text-right">
-                  <p className="text-xs text-gray-400 mb-1">Total Belanja</p>
-                  <p className="text-lg font-semibold text-gray-900">
-                    {formatCurrency(transaction.product.total)}
-                  </p>
+                <div className="space-y-4">
+                  {order.items.map((item) => (
+                    <div
+                      key={`${order.id}-${item.product_id}`}
+                      className="flex items-center space-x-5"
+                    >
+                      <div className="flex-shrink-0">
+                        <img
+                          src={`http://localhost:3001/api/product/image/${item.image}`}
+                          alt={item.namaProduct}
+                          className="w-16 h-16 rounded-lg object-cover bg-amber-100"
+                        />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                          {item.namaProduct}
+                        </h3>
+                        <p className="text-sm text-gray-600">
+                          {item.qty} barang x{" "}
+                          {formatCurrency(item.subtotal / item.qty)}
+                        </p>
+                      </div>
+                      <div className="text-right min-w-[100px]">
+                        <p className="text-md font-medium text-gray-800">
+                          {formatCurrency(item.subtotal)}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
-            </div>
-          ))}
+            ))
+          ) : (
+            <p>No transactions found.</p>
+          )}
         </div>
       </div>
     </div>
