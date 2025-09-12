@@ -33,4 +33,19 @@ const useAnimatedCounter = (endValue, duration) => {
     return count;
 };
 
-export { useAnimatedCounter, formatNumber, formatCurrency };
+const getCategoryColor = (category) => {
+    switch (category.toLowerCase()) {
+        case 'cake':
+            return '#E08764';
+        case 'bread':
+            return '#A25858';
+        case 'cookies':
+            return '#FFD7A0';
+        case 'pastry':
+            return '#C6E0A6';
+        default:
+            return '#6B7280';
+    }
+};
+
+export { useAnimatedCounter, formatNumber, formatCurrency, getCategoryColor };

@@ -1,28 +1,17 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { useAnimatedCounter, formatCurrency } from '@/core/hooks/useAnimatedCounter';
+import { useAnimatedCounter, formatCurrency, getCategoryColor } from '@/core/hooks/useAnimatedCounter';
 import StatCard from '@/components/admin/dashboard/stat-card';
 import ProductStatistics from '@/components/admin/dashboard/product-stat';
 import LatestOrders from '@/components/admin/dashboard/latest-order';
-
-// Helper function for category colors
-// const getCategoryColor = (category) => {
-//     switch (category.toLowerCase()) {
-//         case 'cake': return '#F5D2D2';
-//         case 'bread': return '#F8F7BA';
-//         case 'cookies': return '#BDE3C3';
-//         case 'pastry': return '#A3CCDA';
-//         default: return '#d0a583';
-//     }
-// };
 
 const HomePage = () => {
     const [stats, setStats] = useState({
         totalSales: 0,
         totalOrders: 0,
         soldProducts: 0,
-        pendingOrders: 0,
+        processOrders: 0,
         finishedOrders: 0,
         productStatistics: []
     });
@@ -40,7 +29,7 @@ const HomePage = () => {
                 
                 const totalOrders = ordersData.length;
                 const totalSales = ordersData.reduce((sum, order) => sum + order.total_price, 0);
-                const pendingOrders = ordersData.filter(order => order.status === 'pending').length;
+                const processOrders = ordersData.filter(order => order.status === 'process').length;
                 const finishedOrders = ordersData.filter(order => order.status === 'finish').length;
                 
                 const sortedOrders = ordersData.sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
@@ -69,7 +58,7 @@ const HomePage = () => {
                     totalSales,
                     totalOrders,
                     soldProducts: totalSoldProducts,
-                    pendingOrders,
+                    processOrders,
                     finishedOrders,
                     productStatistics,
                 });
@@ -86,7 +75,7 @@ const HomePage = () => {
     const animatedSales = useAnimatedCounter(stats.totalSales, 2000);
     const animatedOrders = useAnimatedCounter(stats.totalOrders, 1500);
     const animatedSoldProducts = useAnimatedCounter(stats.soldProducts, 1600);
-    const animatedPendingOrders = useAnimatedCounter(stats.pendingOrders, 1000);
+    const animatedProcessOrders = useAnimatedCounter(stats.processOrders, 1000);
     const animatedFinishedOrders = useAnimatedCounter(stats.finishedOrders, 1000);
     
     return (
@@ -128,8 +117,8 @@ const HomePage = () => {
                     />
 
                     <StatCard
-                        title="Pesanan Pending"
-                        value={animatedPendingOrders}
+                        title="Pesanan Process"
+                        value={animatedProcessOrders}
                         subtitle="Pesanan yang belum diproses"
                         growth="-2.1%"
                         color="#EF4444"
