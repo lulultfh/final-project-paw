@@ -125,7 +125,10 @@ export default function OrderPage() {
                 throw new Error(errorData.message || 'Gagal membuat pesanan.');
             }
             
-            alert('Konfirmasi pembayaran berhasil! Pesanan Anda sedang diproses.');
+            const result = await response.json();
+            const orderId = result.id;
+
+            //alert('Konfirmasi pembayaran berhasil! Pesanan Anda sedang diproses.');
             localStorage.removeItem('itemsForCheckout');
             
             const currentCart = JSON.parse(localStorage.getItem('cart') || '[]');
@@ -133,7 +136,14 @@ export default function OrderPage() {
             const newCart = currentCart.filter(item => !itemsToRemove.includes(item.product_id));
             localStorage.setItem('cart', JSON.stringify(newCart));
 
-            window.location.href = '/transaction';
+            if (orderId) {
+                window.location.href = `/invoice?id=${orderId}`;
+            } else {
+                // Fallback jika backend tidak mengirim ID, kembali ke alur lama
+                console.error("Backend tidak mengirimkan orderId setelah order berhasil.");
+                alert('Pesanan berhasil dibuat, namun gagal menampilkan invoice. Anda akan diarahkan ke riwayat transaksi.');
+                window.location.href = '/transaction';
+            }
 
         } catch (error) {
             console.error('Error:', error);

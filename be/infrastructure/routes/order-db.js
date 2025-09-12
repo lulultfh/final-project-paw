@@ -62,6 +62,61 @@ router.get('/admin/download/:filename', (req, res) => {
     });
 });
 
+router.get('/invoice/:id', async (req, res) => {
+    const { id } = req.params;
+
+    if (!id) {
+        return res.status(400).json({ message: 'Order ID is required' });
+    }
+
+    try {
+        // [PERBAIKAN] Menggunakan nama tabel yang benar: `order` dan `user`
+        const orderQuery = `
+            SELECT 
+                o.id, 
+                o.tanggal, 
+                o.total_harga AS total_price, -- Menggunakan total_harga sesuai skema Anda
+                o.status, 
+                u.nama as user_name, 
+                u.email as user_email 
+            FROM \`order\` o
+            JOIN \`user\` u ON o.user_id = u.id
+            WHERE o.id = ?
+        `;
+        const [orderResult] = await db.promise().query(orderQuery, [id]);
+
+        if (orderResult.length === 0) {
+            return res.status(404).json({ message: 'Order not found' });
+        }
+
+        const orderData = orderResult[0];
+
+        // [PERBAIKAN] Menggunakan nama tabel yang benar: `order_item` dan `product`
+        const itemsQuery = `
+            SELECT 
+                oi.qty, 
+                oi.subtotal, 
+                p.namaProduct,
+                p.image
+            FROM \`order_item\` oi
+            JOIN \`product\` p ON oi.product_id = p.id
+            WHERE oi.order_id = ?
+        `;
+        const [itemsResult] = await db.promise().query(itemsQuery, [id]);
+
+        const fullInvoiceData = {
+            ...orderData,
+            items: itemsResult
+        };
+
+        res.status(200).json(fullInvoiceData);
+
+    } catch (error) {
+        console.error('Error fetching invoice data:', error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+});
+
 // GET /api/order
 router.get("/", (req, res) => {
     const { userId } = req.query;
