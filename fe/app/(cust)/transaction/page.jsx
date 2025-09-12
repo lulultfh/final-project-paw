@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { ShoppingCart } from "lucide-react";
+import Link from 'next/link';
 
 export default function TransactionPage() {
   const [activeTab, setActiveTab] = useState("All");
@@ -164,6 +165,14 @@ export default function TransactionPage() {
                     </div>
                   ))}
                 </div>
+                <div className="mt-4 pt-4 border-t border-gray-100 flex justify-end">
+                            <Link 
+                                href={`/invoice?id=${order.id}`}
+                                className="bg-amber-800 text-white font-semibold py-2 px-4 rounded-lg text-sm hover:bg-amber-900 transition-colors"
+                            >
+                                Lihat Invoice
+                            </Link>
+                        </div>
               </div>
             ))
           ) : (
