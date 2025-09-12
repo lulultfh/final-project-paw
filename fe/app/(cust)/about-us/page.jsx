@@ -15,7 +15,7 @@ export default function AboutPage() {
 
         {/* About Us */}
         <section id="about-us" className="mb-20">
-          <h2 className="text-5xl font-bold text-[#171717] mb-8">About Us</h2>
+          <h2 className="text-5xl font-second italic text-[#878B5A] mb-8">About Us</h2>
           <div className="flex flex-col md:flex-row items-center gap-8 md:gap-12">
             <img
               src="/cewek-about.png"
@@ -34,7 +34,7 @@ export default function AboutPage() {
 
         {/* Find Us */}
         <section id="find-us" className="mb-20">
-          <h2 className="text-5xl font-bold text-[#171717] mb-8">Find us in</h2>
+          <h2 className="text-5xl font-second italic text-[#878B5A] mb-8">Find us in</h2>
           <div className="flex flex-col md:flex-row items-center gap-8">
             {/* Map */}
             <div className="flex-grow w-full h-96 bg-gray-200 rounded-2xl shadow-lg overflow-hidden">
@@ -61,7 +61,7 @@ export default function AboutPage() {
 
         {/* Meet Our Team */}
         <section id="meet-our-team">
-          <h2 className="text-5xl font-bold text-[#171717] mb-12">Meet our Team</h2>
+          <h2 className="text-5xl font-second italic text-[#878B5A] mb-12">Meet our Team</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
             {teamMembers.map((member, index) => (
               <div key={index} className="text-center group">
