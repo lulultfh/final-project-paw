@@ -39,7 +39,7 @@ const upload = multer({
     }
 });
 
-router.get("/admin", (req, res) => {
+router.get("/admin", async (req, res) => {
   // Query ini sama seperti query lama Anda yang menghasilkan ringkasan
   const query = `
     SELECT
@@ -61,13 +61,13 @@ router.get("/admin", (req, res) => {
     ORDER BY o.tanggal DESC;
   `;
 
-  db.query(query, (err, results) => {
-    if (err) {
-      console.error("Error fetching admin orders:", err);
-      return res.status(500).json({ error: "Internal Server Error" });
+  try {
+        const [results] = await db.query(query);
+        res.json(results);
+    } catch (error) {
+        console.error("Error fetching admin orders:", error);
+        res.status(500).json({ error: "Internal Server Error" });
     }
-    res.json(results);
-  });
 });
 
 router.get('/admin/download/:filename', (req, res) => {
@@ -106,7 +106,7 @@ router.get('/invoice/:id', async (req, res) => {
             JOIN \`user\` u ON o.user_id = u.id
             WHERE o.id = ?
         `;
-        const [orderResult] = await db.promise().query(orderQuery, [id]);
+        const [orderResult] = await db.query(orderQuery, [id]);
 
         if (orderResult.length === 0) {
             return res.status(404).json({ message: 'Order not found' });
@@ -125,7 +125,7 @@ router.get('/invoice/:id', async (req, res) => {
             JOIN \`product\` p ON oi.product_id = p.id
             WHERE oi.order_id = ?
         `;
-        const [itemsResult] = await db.promise().query(itemsQuery, [id]);
+        const [itemsResult] = await db.query(itemsQuery, [id]);
 
         const fullInvoiceData = {
             ...orderData,
@@ -141,7 +141,7 @@ router.get('/invoice/:id', async (req, res) => {
 });
 
 // GET /api/order
-router.get("/", (req, res) => {
+router.get("/", async (req, res) => {
     const { userId } = req.query;
     if (!userId) { // <-- TAMBAHKAN BLOK INI
     return res.status(400).json({ error: "User ID is required" });
@@ -160,158 +160,151 @@ router.get("/", (req, res) => {
     ORDER BY o.tanggal DESC, o.id ASC;
   `;
 
-  db.query(query, [userId], (err, results) => {
-    if (err) {
-      console.error("Error fetching detailed orders:", err);
-      return res.status(500).json({ error: "Internal Server Error" });
-    }
-    const ordersMap = new Map();
-    results.forEach((row) => {
-      if (!ordersMap.has(row.order_id)) {
-        ordersMap.set(row.order_id, {
-          id: row.order_id,
-          status: row.status,
-          tanggal: row.tanggal,
-          total_price: row.total_harga,
-          customer_name: row.customer_name,
-          items: [],
+  try {
+        const [results] = await db.query(query, [userId]);
+        const ordersMap = new Map();
+        results.forEach((row) => {
+            if (!ordersMap.has(row.order_id)) {
+                ordersMap.set(row.order_id, {
+                    id: row.order_id, status: row.status, tanggal: row.tanggal,
+                    total_price: row.total_harga, customer_name: row.customer_name,
+                    items: [],
+                });
+            }
+            ordersMap.get(row.order_id).items.push({
+                product_id: row.product_id, namaProduct: row.namaProduct, image: row.image,
+                qty: row.qty, subtotal: row.subtotal,
+            });
         });
-      }
-      ordersMap.get(row.order_id).items.push({
-        product_id: row.product_id,
-        namaProduct: row.namaProduct,
-        image: row.image,
-        qty: row.qty,
-        subtotal: row.subtotal,
-      });
-    });
-    const groupedOrders = Array.from(ordersMap.values());
-    res.json(groupedOrders);
-  });
+        res.json(Array.from(ordersMap.values()));
+    } catch (error) {
+        console.error("Error fetching detailed orders:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
 });
 
 // POST /api/order
-router.post('/', upload.single('paymentProof'), (req, res) => {
+router.post('/', upload.single('paymentProof'), async (req, res) => {
     const { user_id, items } = req.body;
     if (!user_id) return res.status(400).json({ message: "user_id wajib diisi" });
 
+    
     let itemsArray;
     try {
         itemsArray = JSON.parse(items);
-        if (!Array.isArray(itemsArray) || itemsArray.length === 0) {
-            return res.status(400).json({ message: "Tidak ada item untuk dipesan" });
+        // Pastikan semua data yang dibutuhkan ada sebelum melanjutkan
+        if (!user_id || !req.file || !Array.isArray(itemsArray) || itemsArray.length === 0) {
+            // Jika ada file terupload saat validasi gagal, hapus lagi
+            if (req.file) fs.unlinkSync(req.file.path);
+            return res.status(400).json({ message: "Data tidak lengkap. User ID, bukti bayar, dan item wajib diisi." });
         }
     } catch (e) {
-        return res.status(400).json({ message: "Format items tidak valid" });
+        if (req.file) fs.unlinkSync(req.file.path);
+        return res.status(400).json({ message: "Format items tidak valid." });
     }
 
-    const buktiBayar = req.file ? req.file.filename : null;
+    let connection;
 
-    const insertOrderQuery = `
-        INSERT INTO \`order\` (user_id, total_harga, bukti_bayar, status, tanggal)
-        VALUES (?, 0, ?, 'process', NOW())
-    `;
+    try {
+        // 2. "Pinjam" satu koneksi dari pool
+        connection = await db.getConnection();
+        
+        // 3. Mulai transaksi
+        await connection.beginTransaction();
 
-    db.query(insertOrderQuery, [user_id, buktiBayar], (err, result) => {
-        if (err) {
-            console.error("Gagal simpan order:", err);
-            return res.status(500).json({ message: "Gagal membuat pesanan" });
+        // Cek Stok Produk terlebih dahulu
+        const productIds = itemsArray.map(item => item.product_id);
+        const [products] = await connection.query(`SELECT id, namaProduct, stok, price FROM product WHERE id IN (?) FOR UPDATE`, [productIds]);
+        
+        const productMap = new Map(products.map(p => [p.id, p]));
+        for (const item of itemsArray) {
+            const product = productMap.get(item.product_id);
+            if (!product) {
+                throw new Error(`Produk dengan ID ${item.product_id} tidak ditemukan.`);
+            }
+            if (product.stok < item.qty) {
+                throw new Error(`Stok untuk produk "${product.namaProduct}" tidak mencukupi (sisa ${product.stok}).`);
+            }
+        }
+
+        // Jika semua stok aman, lanjutkan proses order
+        const buktiBayar = req.file.filename;
+        const [orderResult] = await connection.query(`INSERT INTO \`order\` (user_id, total_harga, bukti_bayar, status, tanggal) VALUES (?, 0, ?, 'process', NOW())`, [user_id, buktiBayar]);
+        const orderId = orderResult.insertId;
+
+        let totalHarga = 0;
+        for (const item of itemsArray) {
+            const product = productMap.get(item.product_id);
+            const subtotal = product.price * item.qty;
+            totalHarga += subtotal;
+            // Insert ke order_item
+            await connection.query(`INSERT INTO \`order_item\` (order_id, product_id, qty, subtotal) VALUES (?, ?, ?, ?)`, [orderId, item.product_id, item.qty, subtotal]);
+            // Kurangi stok produk
+            await connection.query(`UPDATE product SET stok = stok - ? WHERE id = ?`, [item.qty, item.product_id]);
+        }
+
+        // Update total harga di tabel order
+        await connection.query(`UPDATE \`order\` SET total_harga = ? WHERE id = ?`, [totalHarga, orderId]);
+
+        // 4. Jika semua query berhasil, simpan perubahan secara permanen
+        await connection.commit();
+        res.status(201).json({ id: orderId, message: "Pesanan berhasil dibuat" });
+
+    } catch (error) {
+        // 5. Jika ada satu saja error, batalkan semua perubahan
+        if (connection) await connection.rollback();
+        
+        console.error("Error saat membuat pesanan:", error);
+
+        // Hapus file yang sudah diupload jika transaksi gagal
+        if (req.file) {
+            fs.unlink(req.file.path, (err) => {
+                if (err) console.error("Gagal menghapus file bukti bayar setelah error:", err);
+            });
         }
         
-        const orderId = result.insertId;
+        res.status(500).json({ message: error.message || "Gagal membuat pesanan" });
 
-        const insertPromises = itemsArray.map(item => {
-            return new Promise((resolve, reject) => {
-                const qty = parseInt(item.qty) || 0;
-                const productId = item.product_id;
-
-                if (qty <= 0 || !productId) {
-                    return reject(new Error(`Item tidak valid: product_id=${productId}, qty=${qty}`));
-                }
-
-                const query = `
-                    INSERT INTO \`order_item\` (order_id, product_id, qty, subtotal)
-                    SELECT ?, p.id, ?, p.price * ?
-                    FROM product p WHERE p.id = ?
-                `;
-                
-                db.query(query, [orderId, qty, qty, productId], (err, result) => {
-                    if (err || result.affectedRows === 0) {
-                        return reject(err || new Error(`Produk dengan ID ${productId} tidak ditemukan`));
-                    }
-                    resolve(result);
-                });
-            });
-        });
-
-        Promise.all(insertPromises)
-            .then(() => {
-                const updateTotalQuery = `
-                    UPDATE \`order\` SET total_harga = (
-                        SELECT COALESCE(SUM(subtotal), 0) FROM order_item WHERE order_id = ?
-                    ) WHERE id = ?
-                `;
-                db.query(updateTotalQuery, [orderId, orderId], (err, updateResult) => {
-                    if (err) {
-                        return res.status(500).json({ message: "Gagal memperbarui total harga" });
-                    }
-                    res.status(201).json({ id: orderId, message: "Pesanan berhasil dibuat" });
-                });
-            })
-            .catch(err => {
-                console.error("Error menyimpan order_item:", err.message || err);
-                db.query('DELETE FROM `order` WHERE id = ?', [orderId], () => {}); // Rollback
-                res.status(500).json({ message: "Gagal menyimpan detail pesanan: " + (err.message || "unknown error") });
-            });
-    });
+    } finally {
+        // 6. WAJIB: Kembalikan koneksi ke pool setelah semua selesai
+        if (connection) connection.release();
+    }
 });
 
 // PUT /api/order/:id
-router.put('/:id', (req, res) => {
+router.put('/:id', async (req, res) => {
     const { status } = req.body;
     if (!status) {
         return res.status(400).json({ message: "Status wajib diisi" });
     }
 
-    db.query('UPDATE `order` SET status = ? WHERE id = ?', [status, req.params.id], (err, results) => {
-        if (err) {
-            console.error("Gagal update status:", err);
-            return res.status(500).send('Internal Server Error');
-        }
+    try {
+        const [results] = await db.query('UPDATE `order` SET status = ? WHERE id = ?', [status, req.params.id]);
         if (results.affectedRows === 0) {
             return res.status(404).send('Order tidak ditemukan');
         }
         res.json({ id: req.params.id, status });
-    });
+    } catch (error) {
+        console.error("Gagal update status:", error);
+        return res.status(500).send('Internal Server Error');
+    }
 });
 
 // DELETE /api/order/:id
-router.delete('/:id', (req, res) => {
+router.delete('/:id', async (req, res) => {
     const orderId = req.params.id;
-
-    // Langkah 1: Hapus dulu semua item yang terkait dengan order ini
-    const deleteItemsQuery = 'DELETE FROM `order_item` WHERE order_id = ?';
-
-    db.query(deleteItemsQuery, [orderId], (err, itemResults) => {
-        if (err) {
-            console.error("Gagal hapus order items:", err);
-            return res.status(500).send('Internal Server Error while deleting items');
+    try {
+        await db.query('DELETE FROM `order_item` WHERE order_id = ?', [orderId]);
+        const [orderResults] = await db.query('DELETE FROM `order` WHERE id = ?', [orderId]);
+        
+        if (orderResults.affectedRows === 0) {
+            return res.status(404).send('Order tidak ditemukan');
         }
-
-        // Langkah 2: Setelah item berhasil dihapus, baru hapus order utamanya
-        const deleteOrderQuery = 'DELETE FROM `order` WHERE id = ?';
-        db.query(deleteOrderQuery, [orderId], (err, orderResults) => {
-            if (err) {
-                console.error("Gagal hapus order:", err);
-                return res.status(500).send('Internal Server Error while deleting order');
-            }
-            if (orderResults.affectedRows === 0) {
-                // Ini terjadi jika order sudah dihapus tapi itemnya tidak ada
-                return res.status(404).send('Order tidak ditemukan');
-            }
-            res.status(204).send(); // Sukses, tidak ada konten yang dikembalikan
-        });
-    });
+        res.status(204).send();
+    } catch (error) {
+        console.error("Gagal hapus order:", error);
+        return res.status(500).send('Internal Server Error');
+    }
 });
 
 module.exports = router;

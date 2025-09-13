@@ -101,7 +101,7 @@ export default function InvoicePage() {
     if (error) return <div className="min-h-screen flex items-center justify-center text-red-500 text-xl">{error}</div>;
 
     return (
-        <div className="bg-gray-200 min-h-screen p-4 sm:p-8 flex flex-col items-center">
+        <div className="min-h-screen p-4 sm:p-8 flex flex-col items-center">
             <main className="w-full max-w-3xl">
                 {/* INI ADALAH AREA KANVAS UNTUK INVOICE */}
                 <div ref={invoiceRef} className="bg-white p-8 sm:p-12 shadow-lg">

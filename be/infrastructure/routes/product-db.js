@@ -65,24 +65,32 @@ const validatePriceAndStock = (price, stok) => {
 };
 
 // GET semua produk
-router.get("/", (req, res) => {
-    db.query("SELECT * FROM product", (err, results) => {
-        if (err) return res.status(500).json({ error: err });
+router.get("/", async (req, res) => {
+    try {
+        const [results] = await db.query("SELECT * FROM product");
         res.json(results);
-    });
+    } catch (error) {
+        console.error("Error fetching products:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
 });
 
 // GET produk berdasarkan ID
-router.get('/:id', (req, res) => {
-    db.query('SELECT * FROM product WHERE id = ?', [req.params.id], (err, results) => {
-        if (err) return res.status(500).json({ error: 'Internal Server Error' });
-        if (results.length === 0) return res.status(404).json({ error: 'Produk tidak ditemukan' });
+router.get('/:id', async (req, res) => {
+    try {
+        const [results] = await db.query('SELECT * FROM product WHERE id = ?', [req.params.id]);
+        if (results.length === 0) {
+            return res.status(404).json({ error: 'Produk tidak ditemukan' });
+        }
         res.json(results[0]);
-    });
+    } catch (error) {
+        console.error("Error fetching product by ID:", error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
 });
 
 // POST produk baru dengan upload gambar
-router.post('/', upload.single('image'), (req, res) => {
+router.post('/', upload.single('image'), async (req, res) => {
     const { nama, price, desc, stok, kategori } = req.body;
     
     // Validasi field wajib
@@ -114,35 +122,24 @@ router.post('/', upload.single('image'), (req, res) => {
         return res.status(400).json({ error: validation.message });
     }
     
-    const imagePath = req.file.filename; // Hanya simpan nama file di database
-    
-    const query = 'INSERT INTO product (namaProduct, price, description, image, stok, kategori) VALUES (?, ?, ?, ?, ?, ?)';
-    const values = [nama.trim(), Number(price), desc.trim(), imagePath, Number(stok), kategori.trim()];
-    
-    db.query(query, values, (err, results) => {
-        if (err) {
-            console.error('Database error:', err);
-            // Hapus file jika ada error database
-            fs.unlinkSync(req.file.path);
-            return res.status(500).json({ error: 'Internal Server Error' });
-        }
+    try {
+        const imagePath = req.file.filename;
+        const query = 'INSERT INTO product (namaProduct, price, description, image, stok, kategori) VALUES (?, ?, ?, ?, ?, ?)';
+        const values = [nama.trim(), Number(price), desc.trim(), imagePath, Number(stok), kategori.trim()];
         
-        const newProduct = {
-            id: results.insertId,
-            nama: nama.trim(),
-            price: Number(price),
-            desc: desc.trim(),
-            image: imagePath,
-            stok: Number(stok),
-            kategori: kategori.trim()
-        };
+        const [results] = await db.query(query, values);
         
+        const newProduct = { id: results.insertId, nama, price, desc, image: imagePath, stok, kategori };
         res.status(201).json(newProduct);
-    });
+    } catch (error) {
+        cleanupFileOnError();
+        console.error('Database error on create product:', error);
+        return res.status(500).json({ error: 'Internal Server Error' });
+    }
 });
 
 // PUT update produk
-router.put('/:id', upload.single('image'), (req, res) => {
+router.put('/:id', upload.single('image'), async (req, res) => {
     const { nama, price, desc, stok, kategori } = req.body;
     
     // Validasi kategori jika ada
@@ -162,89 +159,68 @@ router.put('/:id', upload.single('image'), (req, res) => {
         }
     }
     
-    // Cek apakah produk exist terlebih dahulu
-    db.query('SELECT * FROM product WHERE id = ?', [req.params.id], (err, existingProduct) => {
-        if (err) {
-            if (req.file) fs.unlinkSync(req.file.path);
-            return res.status(500).json({ error: 'Internal Server Error' });
-        }
-        
-        if (existingProduct.length === 0) {
-            if (req.file) fs.unlinkSync(req.file.path);
+    try {
+        const [existingProducts] = await db.query('SELECT * FROM product WHERE id = ?', [req.params.id]);
+        if (existingProducts.length === 0) {
+            cleanupFileOnError();
             return res.status(404).json({ error: 'Produk tidak ditemukan' });
         }
+        const existingProduct = existingProducts[0];
         
-        let imagePath = existingProduct[0].image; // Gunakan gambar lama jika tidak ada upload baru
-        
-        // Jika ada upload gambar baru
+        let imagePath = existingProduct.image;
         if (req.file) {
             // Hapus gambar lama jika ada
-            if (existingProduct[0].image) {
-                const oldImagePath = './uploads/products/' + existingProduct[0].image;
-                if (fs.existsSync(oldImagePath)) {
-                    fs.unlinkSync(oldImagePath);
-                }
+            if (existingProduct.image) {
+                const oldImagePath = path.join('./uploads/products/', existingProduct.image);
+                if (fs.existsSync(oldImagePath)) fs.unlinkSync(oldImagePath);
             }
             imagePath = req.file.filename;
         }
         
         const updateQuery = 'UPDATE product SET namaProduct = ?, price = ?, description = ?, image = ?, stok = ?, kategori = ? WHERE id = ?';
         const updateValues = [
-            nama || existingProduct[0].namaProduct,
-            price ? Number(price) : existingProduct[0].price,
-            desc || existingProduct[0].description,
+            nama || existingProduct.namaProduct,
+            price !== undefined ? Number(price) : existingProduct.price,
+            desc || existingProduct.description,
             imagePath,
-            stok ? Number(stok) : existingProduct[0].stok,
-            kategori || existingProduct[0].kategori,
+            stok !== undefined ? Number(stok) : existingProduct.stok,
+            kategori || existingProduct.kategori,
             req.params.id
         ];
         
-        db.query(updateQuery, updateValues, (err, results) => {
-            if (err) {
-                console.error('Database error:', err);
-                return res.status(500).json({ error: 'Internal Server Error' });
-            }
-            
-            res.json({ 
-                id: req.params.id, 
-                nama: updateValues[0], 
-                price: updateValues[1], 
-                desc: updateValues[2], 
-                image: updateValues[3], 
-                stok: updateValues[4], 
-                kategori: updateValues[5] 
-            });
-        });
-    });
+        await db.query(updateQuery, updateValues);
+        
+        res.json({ id: req.params.id, ...req.body, image: imagePath });
+    } catch (error) {
+        cleanupFileOnError();
+        console.error('Database error on update product:', error);
+        return res.status(500).json({ error: 'Internal Server Error' });
+    }
 });
 
 // DELETE produk
-router.delete('/:id', (req, res) => {
-    // Ambil data produk terlebih dahulu untuk menghapus gambar
-    db.query('SELECT * FROM product WHERE id = ?', [req.params.id], (err, results) => {
-        if (err) return res.status(500).json({ error: 'Internal Server Error' });
-        
-        if (results.length === 0) {
-            return res.status(404).json({ error: 'Product tidak ditemukan' });
+router.delete('/:id', async (req, res) => {
+     try {
+        const [products] = await db.query('SELECT image FROM product WHERE id = ?', [req.params.id]);
+        if (products.length === 0) {
+            return res.status(404).json({ error: 'Produk tidak ditemukan' });
         }
         
-        const product = results[0];
-        
-        // Hapus produk dari database
-        db.query('DELETE FROM product WHERE id = ?', [req.params.id], (err, deleteResults) => {
-            if (err) return res.status(500).json({ error: 'Internal Server Error' });
-            
-            // Hapus file gambar jika ada
-            if (product.image) {
-                const imagePath = './uploads/products/' + product.image;
-                if (fs.existsSync(imagePath)) {
-                    fs.unlinkSync(imagePath);
-                }
+        const product = products[0];
+        const [deleteResults] = await db.query('DELETE FROM product WHERE id = ?', [req.params.id]);
+
+        if (deleteResults.affectedRows > 0 && product.image) {
+            const imagePath = path.join('./uploads/products/', product.image);
+            if (fs.existsSync(imagePath)) {
+                fs.unlinkSync(imagePath);
             }
-            
-            res.status(204).send();
-        });
-    });
+        }
+        
+        res.status(204).send();
+    } catch (error) {
+        console.error('Database error on delete product:', error);
+        return res.status(500).json({ error: 'Internal Server Error' });
+    }
 });
 
 // Route untuk serve gambar static
