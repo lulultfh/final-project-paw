@@ -108,9 +108,9 @@ const HomePage = () => {
                     />
 
                     <StatCard
-                        title="Total Produk Terjual"
+                        title="Total Stok Produk"
                         value={animatedSoldProducts}
-                        subtitle="Total item yang terjual"
+                        subtitle="Total item yang tersisa"
                         growth="+9.8%"
                         color="#F9D0CE"
                         icon="📦"
