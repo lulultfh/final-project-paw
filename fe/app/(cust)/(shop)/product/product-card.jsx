@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { addToCart } from "./action";
 import { useAuth } from '@/app/context/authContext'; 
@@ -54,10 +56,7 @@ export default function ProductCard({ product }) {
       
       {/* Ubah ini dari Link menjadi button biasa dan tambahkan onClick */}
       <button 
-        onClick={() => {
-          if (isOutOfStock) return; // <-- KUNCI PERBAIKANNYA ADA DI SINI
-          addToCart(product);
-        }}
+        onClick={(handleAddToCart)}
         disabled={isOutOfStock}
         className={`w-full py-2 px-4 font-bold rounded-md ${
           isOutOfStock

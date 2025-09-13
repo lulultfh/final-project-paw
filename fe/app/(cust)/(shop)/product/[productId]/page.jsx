@@ -5,7 +5,6 @@ import { addToCart } from "../action";
 import { useEffect, useState } from "react";
 import { useAuth } from '@/app/context/authContext'; 
 import { useRouter } from 'next/navigation'; 
-//import Link from "next/link";
 
 export default function ProductPage({ params }) {
   const { productId } = params;
@@ -30,9 +29,18 @@ export default function ProductPage({ params }) {
   }, [productId]);
 
   const handleAddToCart = () => {
-    if (isOutOfStock) return; // <-- KUNCI PERBAIKANNYA ADA DI SINI
+    if (isOutOfStock) return; // 
     if (product) {
       addToCart(product);
+    }
+    if (!userToken) {
+      router.push('/login?redirect=' + encodeURIComponent(window.location.pathname));
+      return;
+    }
+    if (product) {
+      addToCart(product);
+
+
     }
   };
 
