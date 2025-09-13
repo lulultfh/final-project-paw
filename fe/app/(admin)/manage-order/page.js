@@ -125,7 +125,7 @@ export default function ManageOrderPage() {
                     <div className="flex flex-col space-y-1 md:flex-row md:space-y-0 md:space-x-1">
                       {/* Tombol Open */}
                       <a
-                        href={`http://localhost:3001/uploads/${order.bukti_bayar}`}
+                        href={`http://localhost:3001/uploads/bukti_bayar/${order.bukti_bayar}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-center bg-blue-500 text-white px-2 py-1 text-xs rounded hover:bg-blue-600 transition-colors"
