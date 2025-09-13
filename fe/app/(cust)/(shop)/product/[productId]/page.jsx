@@ -3,6 +3,8 @@
 import { getDataById } from "../action";
 import { addToCart } from "../action";
 import { useEffect, useState } from "react";
+import { useAuth } from '@/app/context/authContext'; 
+import { useRouter } from 'next/navigation'; 
 //import Link from "next/link";
 
 export default function ProductPage({ params }) {
@@ -10,6 +12,8 @@ export default function ProductPage({ params }) {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { userToken } = useAuth(); 
+  const router = useRouter();
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -27,11 +31,13 @@ export default function ProductPage({ params }) {
 
   // --- TAMBAHKAN INI ---
   // Buat fungsi handler untuk tombol
-  const handleAddToCart = () => {
+ const handleAddToCart = () => {
+    if (!userToken) {
+      router.push('/login?redirect=' + encodeURIComponent(window.location.pathname));
+      return;
+    }
     if (product) {
       addToCart(product);
-      // Anda bisa menambahkan navigasi ke /cart di sini jika mau
-      // window.location.href = '/cart';
     }
   };
 

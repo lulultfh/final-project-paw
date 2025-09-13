@@ -1,9 +1,26 @@
-import Link from "next/link";
+"use client"; 
 
+import Link from 'next/link';
 import { addToCart } from "./action";
+import { useAuth } from '@/app/context/authContext'; 
+import { useRouter } from 'next/navigation';
 
 // Tambahkan onAddToCart di properti
 export default function ProductCard({ product }) {
+  const { userToken } = useAuth();
+  const router = useRouter();
+
+  const handleAddToCart = () => {
+    if (!userToken) {
+      // Arahkan ke login, dan simpan halaman tujuan
+      router.push('/login?redirect=' + encodeURIComponent(window.location.pathname));
+      return;
+    }
+
+    // Jika sudah login, tambahkan ke cart
+    addToCart(product);
+  };
+
   const formattedPrice = new Intl.NumberFormat("id-ID", {
     style: "currency",
     currency: "IDR",
@@ -37,7 +54,7 @@ export default function ProductCard({ product }) {
       
       {/* Ubah ini dari Link menjadi button biasa dan tambahkan onClick */}
       <button 
-        onClick={() => addToCart(product)} 
+        onClick={handleAddToCart}
         className="w-full py-2 px-4 bg-[#F3EBD8] text-[#7D5A5A] font-bold rounded-md hover:bg-[#F76079] hover:text-[#F3EBD8]"
       >
         Add to Cart
