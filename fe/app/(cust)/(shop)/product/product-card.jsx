@@ -1,5 +1,4 @@
 import Link from "next/link";
-
 import { addToCart } from "./action";
 
 // Tambahkan onAddToCart di properti
@@ -10,6 +9,8 @@ export default function ProductCard({ product }) {
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   }).format(product.price);
+
+  const isOutOfStock = product.stok === 0;
 
   return (
     <div key={product.id} className="group relative bg-[#F8D7D1] p-4 rounded-lg shadow-md font-bold flex flex-col min-h-[350px]">
@@ -37,10 +38,18 @@ export default function ProductCard({ product }) {
       
       {/* Ubah ini dari Link menjadi button biasa dan tambahkan onClick */}
       <button 
-        onClick={() => addToCart(product)} 
-        className="w-full py-2 px-4 bg-[#F3EBD8] text-[#7D5A5A] font-bold rounded-md hover:bg-[#F76079] hover:text-[#F3EBD8]"
+        onClick={() => {
+          if (isOutOfStock) return; // <-- KUNCI PERBAIKANNYA ADA DI SINI
+          addToCart(product);
+        }}
+        disabled={isOutOfStock}
+        className={`w-full py-2 px-4 font-bold rounded-md ${
+          isOutOfStock
+            ? 'bg-gray-400 text-gray-700 cursor-not-allowed'
+            : 'bg-[#F3EBD8] text-[#7D5A5A] hover:bg-[#F76079] hover:text-[#F3EBD8]'
+        }`}
       >
-        Add to Cart
+        {isOutOfStock ? 'Stok Habis' : 'Add to Cart'}
       </button>
     </div>
   );

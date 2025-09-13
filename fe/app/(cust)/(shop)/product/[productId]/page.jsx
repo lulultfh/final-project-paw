@@ -25,13 +25,10 @@ export default function ProductPage({ params }) {
     fetchProduct();
   }, [productId]);
 
-  // --- TAMBAHKAN INI ---
-  // Buat fungsi handler untuk tombol
   const handleAddToCart = () => {
+    if (isOutOfStock) return; // <-- KUNCI PERBAIKANNYA ADA DI SINI
     if (product) {
       addToCart(product);
-      // Anda bisa menambahkan navigasi ke /cart di sini jika mau
-      // window.location.href = '/cart';
     }
   };
 
@@ -51,6 +48,8 @@ export default function ProductPage({ params }) {
     maximumFractionDigits: 0,
   }).format(product.price);
 
+  const isOutOfStock = product.stok === 0;
+  
   return (
     <div className="min-h-screen flex items-center justify-center p-8 md:p-12">
       <div className="max-w-4xl mx-auto bg-[#F8D7D1] rounded-lg shadow-xl overflow-hidden">
@@ -74,8 +73,14 @@ export default function ProductPage({ params }) {
             {/* Bungkus tombol dengan Link */}
             <button 
               onClick={handleAddToCart}
-              className="mt-6 w-full py-3 px-4 bg-[#F3EBD8] text-[#7D5A5A] font-bold rounded-md hover:bg-[#F76079] hover:text-[#F3EBD8]">
-              Add to Cart
+              disabled={isOutOfStock}
+              className={`mt-6 w-full py-3 px-4 font-bold rounded-md ${
+                isOutOfStock
+                  ? 'bg-gray-400 text-gray-700 cursor-not-allowed'
+                  : 'bg-[#F3EBD8] text-[#7D5A5A] hover:bg-[#F76079] hover:text-[#F3EBD8]'
+              }`}
+              >
+              {isOutOfStock ? 'Stok Habis' : 'Add to Cart'}
             </button>
           </div>
         </div>
