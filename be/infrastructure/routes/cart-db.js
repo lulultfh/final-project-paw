@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const db = require("../database/db"); // Pastikan path ini benar
 
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
   const { ids } = req.body; // Ambil array 'ids' dari body request
 
   // Validasi input
@@ -14,15 +14,14 @@ router.post('/', (req, res) => {
   // Klausa IN(?) sangat aman dari SQL Injection jika digunakan dengan library mysql2.
   const query = 'SELECT * FROM product WHERE id IN (?)';
   
-  db.query(query, [ids], (err, results) => {
-    if (err) {
-      console.error('Failed to fetch product details for cart:', err);
-      return res.status(500).json({ message: 'Internal server error' });
-    }
-
-    // Jika berhasil, kirim kembali array berisi detail produk
+  try {
+    // Langsung 'await' query-nya, tidak perlu callback
+    const [results] = await db.query(query, [ids]);
     res.json(results);
-  });
+  } catch (error) {
+    console.error('Failed to fetch product details for cart:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
 });
 
 module.exports = router;
