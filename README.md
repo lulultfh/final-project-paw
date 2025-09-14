@@ -57,6 +57,7 @@
     │   │   │   ├── (shop)/
     │   │   │   │   ├── cart/
     │   │   │   │   └── product/
+    │   │   │   │       └── [productId]                #dynamic route for product detail
     │   │   │   ├── about-us/
     │   │   │   ├── invoice
     │   │   │   ├── order/
