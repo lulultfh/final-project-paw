@@ -1,16 +1,16 @@
-// components/cust/ui/navbar.jsx
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import SearchBar from "./search";
 import CartCount from "./ui/cart-count";
-import ProductPage from "@/app/(cust)/(shop)/product/page";
-import Carousel from "./ui/carousel";
 import Link from "next/link";
 import { useAuth } from "@/app/context/authContext";
 
 export default function NavbarCustMenu() {
-  const { isLoggedIn } = useAuth(); // Ambil isLoggedIn dari context
+  const { isLoggedIn, userData } = useAuth(); // Ambil userData dari context
+
+  // Tentukan gambar profil, gunakan placeholder jika tidak ada
+  const profileImageSrc = userData?.profileImageUrl || `https://ui-avatars.com/api/?name=${userData?.nama}&background=F5EBE0&color=6F4E37`;
 
   return (
     <div className="w-full">
@@ -27,11 +27,16 @@ export default function NavbarCustMenu() {
                   <CartCount />
                 </Link>
                 <div className="h-6 w-px bg-[#72541B]"></div>
-                <img
-                  src="https://i.pravatar.cc/40"
-                  alt="Profile"
-                  className="w-8 h-8 rounded-full object-cover"
-                />
+                {/* Tambahkan Link di sini
+                  dan gunakan userData untuk gambar profil
+                */}
+                <Link href="/profile">
+                  <img
+                    src={profileImageSrc}
+                    alt="Profile"
+                    className="w-8 h-8 rounded-full object-cover"
+                  />
+                </Link>
               </>
             ) : (
               <div className="flex items-center space-x-4">
