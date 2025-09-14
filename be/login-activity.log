@@ -1,4 +1,0 @@
-[2025-09-14T12:10:21.195Z] SUCCESS_LOGIN - User: admin (ID: 5, Role: admin) | IP: ::ffff:127.0.0.1
-[2025-09-14T12:10:21.225Z] FAILED_LOGIN - Username atau password kosong | IP: ::ffff:127.0.0.1
-[2025-09-14T12:10:21.360Z] FAILED_LOGIN - Password salah untuk user: admin | IP: ::ffff:127.0.0.1
-[2025-09-14T12:10:21.380Z] ERROR_LOGIN - Server error saat login user admin: Database connection failed | IP: ::ffff:127.0.0.1
