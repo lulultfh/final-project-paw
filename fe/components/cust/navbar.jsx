@@ -10,8 +10,10 @@ export default function NavbarCustMenu() {
   const { isLoggedIn, userData } = useAuth(); // Ambil userData dari context
 
   // Tentukan gambar profil, gunakan placeholder jika tidak ada
-  const profileImageSrc = userData?.profileImageUrl || `https://ui-avatars.com/api/?name=${userData?.nama}&background=F5EBE0&color=6F4E37`;
-
+  const profileImageUrl = userData?.image
+  ? `http://localhost:3001/uploads/avatar_user/${userData.image}`
+  : '/user-avatar-1.png'; // Atau gambar default lain
+  
   return (
     <div className="w-full">
       <div className="max-w-6xl mx-auto px-6 py-8">
@@ -32,9 +34,11 @@ export default function NavbarCustMenu() {
                 */}
                 <Link href="/profile">
                   <img
-                    src={profileImageSrc}
+                    src={profileImageUrl} // Gunakan variabel ini
                     alt="Profile"
                     className="w-8 h-8 rounded-full object-cover"
+                    // Tambahkan juga onError sebagai fallback
+                    onError={(e) => { e.target.onerror = null; e.target.src='/path/to/default/avatar.png'; }}
                   />
                 </Link>
               </>
