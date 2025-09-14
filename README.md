@@ -32,11 +32,60 @@
 
 ## Project Structure
 ```
-├── backend/
-├── frontend/
-├── README.md                          # Dokumentasi utama proyek
+└── final-project-paw/
+    ├── be/
+    │   ├── infrastructure/
+    │   │   ├── database
+    │   │   ├── middleware
+    │   │   ├── routes
+    │   │   └── utils
+    │   ├── test
+    │   ├── app.js
+    │   ├── package.json
+    │   └── server.js
+    ├── fe/
+    │   ├── app/
+    │   │   ├── (admin)/
+    │   │   │   ├── home-admin/
+    │   │   │   ├── manage-order/
+    │   │   │   ├── manage-product/
+    │   │   │   └── layout.js
+    │   │   ├── (auth)/
+    │   │   │   ├── login/
+    │   │   │   └── register/
+    │   │   ├── (cust)/
+    │   │   │   ├── (shop)/
+    │   │   │   │   ├── cart/
+    │   │   │   │   └── product/
+    │   │   │   ├── about-us/
+    │   │   │   ├── invoice
+    │   │   │   ├── order/
+    │   │   │   ├── profile/
+    │   │   │   │   └── edit/
+    │   │   │   ├── transaction/
+    │   │   │   ├── layout.js
+    │   │   │   └── page.js
+    │   │   ├── context/
+    │   │   ├── global.css
+    │   │   ├── layout.js
+    │   │   └── not-found.js
+    │   ├── components/
+    │   │   ├── admin/
+    │   │   │   ├── dashboard/
+    │   │   │   └── manage/
+    │   │   └── cust/
+    │   │       └── ui/
+    │   ├── core/
+    │   │   ├── domain/
+    │   │   └── hooks/
+    │   ├── public/
+    │   │   ├── font/
+    │   │   └── images/
+    │   ├── Readme.md
+    │   ├── package.json
+    │   └── next.config.mjs
+    └── Readme.md
 ```
-
 ## API Testing Documentation
 
 ## How to Run
