@@ -155,7 +155,7 @@ export default function OrderPage() {
     if (error) return <div className="min-h-screen flex items-center justify-center text-red-500">{error}</div>;
 
     return (
-        <div className="bg-gray-100 min-h-screen p-8">
+        <div className="min-h-screen p-8">
             <main className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-10">
                 
                 {/* Kolom Kiri */}
