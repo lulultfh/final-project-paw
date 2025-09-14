@@ -73,7 +73,7 @@ router.get("/admin", async (req, res) => {
 router.get('/admin/download/:filename', (req, res) => {
     const { filename } = req.params;
     // Path ini mengasumsikan folder 'uploads' sejajar dengan folder 'routes'
-    const filePath = path.join(process.cwd(), 'uploads', filename);
+    const filePath = path.join(process.cwd(), 'uploads/bukti_bayar', filename);
 
     // res.download() secara otomatis mengatur header untuk memaksa unduhan
     res.download(filePath, (err) => {
