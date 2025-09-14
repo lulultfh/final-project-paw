@@ -86,7 +86,6 @@ const HomePage = () => {
     const animatedFinishedOrders = useAnimatedCounter(stats.finishedOrders, 1000);
     
     return (
-        <AdminRoute>
         <div className="min-h-screen p-6">
             <div className="max-w-7xl mx-auto">
                 {/* Header */}
@@ -157,7 +156,6 @@ const HomePage = () => {
                 </div>
             </div>
         </div>
-        </AdminRoute>
     );
 };
 
