@@ -4,6 +4,8 @@ const db = require("../database/db");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const JWT_SECRET = process.env.JWT_SECRET || "rahasiaSuper";
+const multer = require('multer');
+const upload = multer({ dest: './uploads/avatar_user/' });
 
 router.get("/", async (req, res) => {
   try {
@@ -143,4 +145,100 @@ router.post("/login", async (req, res) => {
     }
 });
 
-module.exports = router;
+// Fungsi untuk update user
+async function updateUser(userId, userData) {
+  const { nama, username, email, profileImage } = userData;
+
+  // Validasi wajib
+  if (!nama || !username || !email) {
+    throw new Error("Nama, username, dan email wajib diisi.");
+  }
+
+  // Cek apakah user ada
+  const user = await db.get('SELECT * FROM users WHERE id = ?', [userId]);
+  if (!user) {
+    throw new Error("User tidak ditemukan.");
+  }
+
+  // Cek duplikat username/email
+  const existingUser = await db.get(
+    'SELECT id FROM users WHERE username = ? AND id != ?',
+    [username, userId]
+  );
+  if (existingUser) {
+    throw new Error("Username sudah digunakan.");
+  }
+
+  const existingEmail = await db.get(
+    'SELECT id FROM users WHERE email = ? AND id != ?',
+    [email, userId]
+  );
+  if (existingEmail) {
+    throw new Error("Email sudah digunakan.");
+  }
+
+  // Update data user
+  await db.run(
+    'UPDATE users SET nama = ?, username = ?, email = ? WHERE id = ?',
+    [nama, username, email, userId]
+  );
+
+  // Handle upload gambar jika ada
+  if (profileImage) {
+    // Hapus gambar lama jika ada
+    if (user.image && user.image !== null) {
+      const oldImagePath = `./uploads/avatar_user/${user.image}`;
+      try {
+        require('fs').unlinkSync(oldImagePath);
+      } catch (err) {
+        console.warn("Gagal hapus gambar lama:", err);
+      }
+    }
+
+    // Simpan gambar baru
+    const fileName = `${Date.now()}_${profileImage.name}`;
+    const filePath = `./uploads/avatar_user/${fileName}`;
+
+    // Salin file ke folder uploads
+    require('fs').createReadStream(profileImage.path).pipe(
+      require('fs').createWriteStream(filePath)
+    );
+
+    // Simpan path ke database
+    await db.run('UPDATE users SET image = ? WHERE id = ?', [fileName, userId]);
+  }
+
+  return await db.get('SELECT id, nama, username, email, image FROM users WHERE id = ?', [userId]);
+}
+
+// Route PUT /users/:id
+app.put('/users/:id', upload.single('profileImage'), async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const { nama, username, email } = req.body;
+
+    // Validasi input
+    if (!nama || !username || !email) {
+      return res.status(400).json({ error: "Nama, username, dan email wajib diisi." });
+    }
+
+    // Update user
+    const updatedUser = await updateUser(userId, {
+      nama,
+      username,
+      email,
+      profileImage: req.file // Ini berisi file yang diupload
+    });
+
+    res.json({
+      message: "Profil berhasil diperbarui!",
+      user: updatedUser
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+module.exports = {
+  router, updateUser,
+};
