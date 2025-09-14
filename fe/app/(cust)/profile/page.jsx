@@ -1,4 +1,3 @@
-// Pastikan path file ini adalah: fe/app/(cust)/profile/page.jsx
 "use client";
 
 import Link from "next/link";
@@ -24,7 +23,7 @@ export default function ProfilePage() {
   // Gunakan userData.nama, karena di authContext Anda menyimpan 'nama'
   const avatarUrl = userData.profileImageUrl 
     ? userData.profileImageUrl 
-    : `https://ui-avatars.com/api/?name=${encodeURIComponent(userData.nama)}&background=F5EBE0&color=6F4E37`;
+    : `/user-avatar-1.png`;
 
   return (
     <div className="max-w-4xl mx-auto p-8 bg-white rounded-lg shadow-md my-10">
