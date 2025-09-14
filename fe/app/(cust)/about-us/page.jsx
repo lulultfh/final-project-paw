@@ -1,5 +1,7 @@
 "use client";
+
 import React from "react";
+import MapLocation from "@/components/cust/ui/map";
 
 export default function AboutPage() {
   const teamMembers = [
@@ -38,15 +40,7 @@ export default function AboutPage() {
           <div className="flex flex-col md:flex-row items-center gap-8">
             {/* Map */}
             <div className="flex-grow w-full h-96 bg-gray-200 rounded-2xl shadow-lg overflow-hidden">
-              <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3952.91578335338!2d110.3648588748924!3d-7.79851619222271!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e7a578bf2d49a2d%3A0x1d32a9a7c3b2f5a!2sYogyakarta!5e0!3m2!1sen!2sid!4v1694346452504!5m2!1sen!2sid"
-                width="100%"
-                height="100%"
-                style={{ border: 0 }}
-                allowFullScreen
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-              ></iframe>
+              <MapLocation />
             </div>
             {/* Mascot */}
             <div className="flex-shrink-0 hidden md:block">
