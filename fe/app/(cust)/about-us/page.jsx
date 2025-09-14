@@ -5,10 +5,10 @@ import MapLocation from "@/components/cust/ui/map";
 
 export default function AboutPage() {
   const teamMembers = [
-    { name: "Jane Doe", role: "Head Pâtissier", img: "https://placehold.co/300x300/FDECE2/5D4037?text=Jane" },
-    { name: "John Smith", role: "Master Baker", img: "https://placehold.co/300x300/D4E0C7/5D4037?text=John" },
-    { name: "Emily White", role: "Chocolatier", img: "https://placehold.co/300x300/F5DBCB/5D4037?text=Emily" },
-    { name: "Michael Brown", role: "Operations Head", img: "https://placehold.co/300x300/FDF6B2/5D4037?text=Michael" },
+    { name: "Lu'lu' Luthfiah", role: "Fullstack Developer", nim: "20230140209", img: "images/uls.jpeg" },
+    { name: "Mannanta Brilian Citra", role: "Fullstack Developer", nim: "20230140228", img: "images/mananta.jpeg" },
+    { name: "Azizah Aurellia Azmi", role: "Fullstack Developer", nim: "202301402034", img: "images/azizi.jpeg" },
+    { name: "Husna Kamila Syahida", role: "Fullstack Developer", nim: "20230140238", img: "images/husna.jpeg" },
   ];
 
   return (
@@ -68,6 +68,7 @@ export default function AboutPage() {
                 </div>
                 <h3 className="text-xl font-bold text-[#171717]">{member.name}</h3>
                 <p className="text-neutral-600">{member.role}</p>
+                <p className="text-neutral-600">{member.nim}</p>
               </div>
             ))}
           </div>
