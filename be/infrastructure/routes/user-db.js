@@ -6,6 +6,7 @@ const jwt = require("jsonwebtoken");
 const multer = require('multer');
 const fs = require('fs').promises; // Menggunakan fs/promises untuk operasi file async
 const path = require('path');
+const { logActivity } = require('../utils/logger');
 
 // Konfigurasi Environment Variable untuk JWT Secret
 const JWT_SECRET = process.env.JWT_SECRET || "rahasiaSuper";
@@ -208,12 +209,14 @@ router.post("/login", async (req, res) => {
     const { username, passwd } = req.body;
 
     if (!username || !passwd) {
+        logActivity(`FAILED_LOGIN - Username atau password kosong | IP: ${req.ip}`);
         return res.status(400).json({ message: "Username dan password wajib diisi!" });
     }
 
     try {
         const [results] = await db.query("SELECT * FROM user WHERE username = ?", [username]);
         if (results.length === 0) {
+            logActivity(`FAILED_LOGIN - Username tidak ditemukan: ${username} | IP: ${req.ip}`);
             return res.status(401).json({ message: "Username atau password salah" });
         }
 
@@ -221,6 +224,7 @@ router.post("/login", async (req, res) => {
         const match = await bcrypt.compare(passwd, user.passwd);
 
         if (!match) {
+            logActivity(`FAILED_LOGIN - Password salah untuk user: ${username} | IP: ${req.ip}`);
             return res.status(401).json({ message: "Username atau password salah" });
         }
 
@@ -229,6 +233,8 @@ router.post("/login", async (req, res) => {
             JWT_SECRET,
             { expiresIn: "3h" }
         );
+        
+        logActivity(`SUCCESS_LOGIN - User: ${username} (ID: ${user.id}, Role: ${user.role}) | IP: ${req.ip}`);
 
         res.json({
             message: "Login berhasil",
@@ -242,6 +248,7 @@ router.post("/login", async (req, res) => {
             }
         });
     } catch (error) {
+        logActivity(`ERROR_LOGIN - Server error saat login user ${username}: ${error.message} | IP: ${req.ip}`);
         console.error('Login error:', error);
         res.status(500).json({ message: "Internal Server Error" });
     }
