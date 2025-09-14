@@ -350,7 +350,7 @@ export default function EditProfilePage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-8 bg-white rounded-lg shadow-md my-10">
+    <div className="max-w-4xl mx-auto p-8 bg-[#F3EBD8] rounded-lg shadow-md my-10">
       <h1 className="text-3xl font-bold text-[#6F4E37] mb-6">Edit Profil</h1>
       <form onSubmit={handleSubmit}>
         <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-6 mb-8">
