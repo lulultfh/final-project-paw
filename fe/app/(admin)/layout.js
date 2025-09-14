@@ -1,12 +1,14 @@
 import "../globals.css";
 import { AuthProvider } from "../context/authContext";
 import SidebarLayoutAdmin from "@/components/admin/sidebar";
+import AdminRoute from '@/components/admin/adminRoute';
 
 export default function RootAdminLayout({ children }) {
   return (
     <html lang="en">
       <body className={`antialiased`}>
         <AuthProvider>
+          <AdminRoute>
           <div className="flex">
             {/* Sidebar */}
             <SidebarLayoutAdmin />
@@ -19,6 +21,7 @@ export default function RootAdminLayout({ children }) {
               </main>
             </div>
           </div>
+          </AdminRoute>
         </AuthProvider>
       </body>
     </html>

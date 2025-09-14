@@ -5,8 +5,11 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const JWT_SECRET = process.env.JWT_SECRET || "rahasiaSuper";
 
-router.get("/", async (req, res) => {
-  try {
+const authMiddleware = require('../middleware/auth'); // Sesuaikan path jika perlu
+const adminMiddleware = require('../middleware/authAdmin')
+
+router.get("/", [authMiddleware, adminMiddleware], async (req, res) => {
+    try {
         const [results] = await db.query("SELECT id, nama, username, email, role FROM user");
         res.json(results);
     } catch (error) {
@@ -15,15 +18,22 @@ router.get("/", async (req, res) => {
     }
 });
 
-router.get('/:id', async (req, res) => {
-     try {
-        const [results] = await db.query('SELECT id, nama, username, email, role FROM user WHERE id = ?', [req.params.id]);
+router.get('/:id', authMiddleware, async (req, res) => {
+
+    const loggedInUser = req.user; // Didapat dari token
+    const requestedUserId = req.params.id;
+
+    if (loggedInUser.role !== 'admin' && loggedInUser.id.toString() !== requestedUserId) {
+        return res.status(403).json({ message: "Akses ditolak" });
+    }
+    
+    try {
+        const [results] = await db.query('SELECT id, nama, username, email, role FROM user WHERE id = ?', [requestedUserId]);
         if (results.length === 0) {
             return res.status(404).json({ message: 'User tidak ditemukan' });
         }
         res.json(results[0]);
     } catch (error) {
-        console.error("Error fetching user by ID:", error);
         res.status(500).json({ message: 'Internal Server Error' });
     }
 });
@@ -35,7 +45,7 @@ router.post('/', async (req, res) => {
     }
     
     try {
-        // Hash password langsung dengan await
+        
         const hashedPassword = await bcrypt.hash(passwd, 10);
 
         const query = 'INSERT INTO user (nama, username, passwd, email, role) VALUES (?, ?, ?, ?, ?)';
@@ -57,19 +67,27 @@ router.post('/', async (req, res) => {
     }
 });
 
-router.put('/:id', async  (req, res) => {
-    const { nama, username, passwd, email, role} = req.body;
+router.put('/:id', authMiddleware, async (req, res) => {
+    const loggedInUser = req.user;
+    const requestedUserId = req.params.id;
 
-     try {
-        const [users] = await db.query('SELECT * FROM user WHERE id = ?', [req.params.id]);
+    if (loggedInUser.role !== 'admin' && loggedInUser.id.toString() !== requestedUserId) {
+        return res.status(403).json({ message: "Akses ditolak" });
+    }
+
+    const { nama, username, passwd, email, role } = req.body;
+    
+    if (loggedInUser.role !== 'admin' && role) {
+        return res.status(403).json({ message: 'Anda tidak bisa mengubah role.' });
+    }
+
+    try {
+        const [users] = await db.query('SELECT * FROM user WHERE id = ?', [requestedUserId]);
         if (users.length === 0) {
             return res.status(404).json({ message: 'User tidak ditemukan' });
         }
         
         const user = users[0];
-        
-        // Cek apakah ada password baru yang dikirim. Jika ada, hash password tersebut.
-        // Jika tidak, gunakan password lama yang sudah di-hash.
         const hashedPassword = passwd ? await bcrypt.hash(passwd, 10) : user.passwd;
 
         const query = 'UPDATE user SET nama = ?, username = ?, passwd = ?, email = ?, role = ? WHERE id = ?';
@@ -78,21 +96,20 @@ router.put('/:id', async  (req, res) => {
             username || user.username,
             hashedPassword,
             email || user.email,
-            role || user.role,
-            req.params.id
+            loggedInUser.role === 'admin' ? (role || user.role) : user.role,
+            requestedUserId
         ];
         
         await db.query(query, values);
-        
-        res.json({ id: req.params.id, nama, username, email, role });
+        res.json({ message: 'User berhasil diupdate' });
     } catch (error) {
         console.error('Database error on update user:', error);
         res.status(500).json({ message: 'Internal Server Error' });
     }
 });
 
-router.delete('/:id', async  (req, res) => {
-     try {
+router.delete('/:id', [authMiddleware, adminMiddleware], async (req, res) => {
+    try {
         const [results] = await db.query('DELETE FROM user WHERE id = ?', [req.params.id]);
         if (results.affectedRows === 0) {
             return res.status(404).json({ message: 'User tidak ditemukan' });

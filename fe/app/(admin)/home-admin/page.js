@@ -5,8 +5,11 @@ import { useAnimatedCounter, formatCurrency, getCategoryColor } from '@/core/hoo
 import StatCard from '@/components/admin/dashboard/stat-card';
 import ProductStatistics from '@/components/admin/dashboard/product-stat';
 import LatestOrders from '@/components/admin/dashboard/latest-order';
+import AdminRoute from '@/components/admin/adminRoute';
+import { useAuth } from '@/app/context/authContext'; 
 
 const HomePage = () => {
+    const { userToken } = useAuth();
     const [stats, setStats] = useState({
         totalSales: 0,
         totalOrders: 0,
@@ -24,6 +27,10 @@ const HomePage = () => {
         const fetchData = async () => {
             try {
                 // Fetch orders data
+                const headers = {
+                    'Authorization': `Bearer ${userToken}`,
+                    'Content-Type': 'application/json'
+                };
                 const ordersRes = await fetch("http://localhost:3001/api/order/admin");
                 const ordersData = await ordersRes.json();
                 
@@ -69,7 +76,7 @@ const HomePage = () => {
         };
 
         fetchData();
-    }, []);
+    }, [userToken]);
 
     // Custom Hooks for animated counter
     const animatedSales = useAnimatedCounter(stats.totalSales, 2000);
@@ -79,6 +86,7 @@ const HomePage = () => {
     const animatedFinishedOrders = useAnimatedCounter(stats.finishedOrders, 1000);
     
     return (
+        <AdminRoute>
         <div className="min-h-screen p-6">
             <div className="max-w-7xl mx-auto">
                 {/* Header */}
@@ -149,6 +157,7 @@ const HomePage = () => {
                 </div>
             </div>
         </div>
+        </AdminRoute>
     );
 };
 
