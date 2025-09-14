@@ -1,22 +1,32 @@
-# Butter & Bliss🥐
+# Butter & Bliss: Sistem Penjualan dan Pengelolaan Bakery berbasis Website
+![Logo](fe/public/logo-text.svg)
+
 > this project was created for Final Project TI501P Pengembangan Aplikasi Web
 
 ## Table of Contents
-- [Deskripsi Program](#deskripsi-program)
 - [Use Case Diagram](#use-case-diagram)
 - [Project Structure](#project-structure)
 - [API Testing Documentation](#api-testing-documentation)
 - [How to Run](#how-to-run)
 - [Author](#author)
-  
-## Deskripsi Program
-> 
+
 ### Features
-- Browse bakery menu with images and prices
-- Filter by category, flavor, or seasonal specials
+#### Customers
+- Browse bakery menu based on category (cake, bread, pastry, cookies)
+- Product listing displays product images, descriptions, and prices.
+- Product detail shows detailed information (dynamic route parameter).
+- Shopping cart allows adding, removing, or adjusting product quantities.
+- Checkout and invoice enables completing orders and generating invoices.
+- User profile
+- Transaction history lets users review past orders and their status.
+#### Admin
+- Dashboard provides an overview of sales, orders, and popular products.
+- Manage Products enables adding, editing, removing products, and updating stock.
+- Manage Orders allows viewing and processing customer orders.
 ### Tech Stack
-- **Framework**: Next.js 15.4.6, Node.js 22.11.0
-- **Language**: Javascript
+- **Next.js 15 (App Router)**
+- **Node.js 22**
+- **Tailwind CSS**
 
 ## Use Case Diagram
 
