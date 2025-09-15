@@ -9,7 +9,7 @@ export default function ManageOrderPage() {
   // Fetch order data from the backend
   const fetchOrders = async () => {
     try {
-      const res = await fetch("http://10.49.3.154:3001/api/order/admin");
+      const res = await fetch("http://localhost:3001/api/order/admin");
       const data = await res.json();
       setOrders(data);
     } catch (err) {
@@ -24,7 +24,7 @@ export default function ManageOrderPage() {
   // Handle order status update
   const handleStatusChange = async (orderId, newStatus) => {
     try {
-      await fetch(`http://10.49.3.154:3001/api/order/${orderId}`, {
+      await fetch(`http://localhost:3001/api/order/${orderId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: newStatus }),
@@ -39,7 +39,7 @@ export default function ManageOrderPage() {
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this order?")) {
       try {
-        await fetch(`http://10.49.3.154:3001/api/order/${id}`, { method: "DELETE" });
+        await fetch(`http://localhost:3001/api/order/${id}`, { method: "DELETE" });
         fetchOrders();
       } catch (err) {
         console.error("Error deleting order:", err);
@@ -50,7 +50,7 @@ export default function ManageOrderPage() {
   // Handle PDF download
   const handleDownloadPDF = async () => {
     try {
-      const res = await fetch("http://10.49.3.154:3001/api/order/admin/download-pdf", {
+      const res = await fetch("http://localhost:3001/api/order/admin/download-pdf", {
         method: "GET",
         headers: { "Content-Type": "application/pdf" },
       });
