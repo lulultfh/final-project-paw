@@ -21,7 +21,7 @@ export default function ProfilePage() {
 
   // Tentukan URL avatar
   const avatarUrl = userData.image 
-  ? `http://localhost:3001/uploads/avatar_user/${userData.image}` 
+  ? `http://10.49.3.154:3001/uploads/avatar_user/${userData.image}` 
   : `/user-avatar-1.png`;
 
   return (
