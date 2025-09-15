@@ -28,7 +28,9 @@
 - **Node.js 22**
 - **Tailwind CSS**
 
-## Use Case Diagram
+## Use C
+ase Diagram
+| <img width="600" height="582" alt="use case bakery revisi 1" src="https://github.com/user-attachments/assets/63cc5b5f-aa3c-4a21-8f54-da43977d0975" /> |
 
 ## Project Structure
 ```
