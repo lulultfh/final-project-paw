@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 
 export default function Carousel() {
+  const [index, setIndex] = useState(0);
   const carouselRef = useRef(null);
   // const [index, setIndex] = useState(0);
 
