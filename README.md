@@ -1,4 +1,4 @@
-# Butter & Bliss: Sistem Penjualan dan Pengelolaan Bakery berbasis Website
+# Butter&Bliss: Sistem Penjualan dan Pengelolaan Bakery berbasis Website
 ![Logo](fe/public/logo-text.svg)
 
 > this project was created for Final Project TI501P Pengembangan Aplikasi Web
