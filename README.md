@@ -88,6 +88,9 @@
     └── Readme.md                                        # dokumentasi utama projek
 ```
 ## API Testing Documentation
+[Link Postman](https://app.getpostman.com/join-team?invite_code=294c04167642ad666b9b78c55b8f0ff3fbea7c82aeac4f9d4a7360410975f79f&target_code=cceea7b38499405ac6d466015b67ec1f)
+- [Dokumentasi testing api/product](Documentation/api-product.md)
+- [Dokumentasi testing api/user](Documentation/api-user.md)
 
 ## How to Run
 
