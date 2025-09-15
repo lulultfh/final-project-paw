@@ -95,6 +95,36 @@
 - [Dokumentasi testing api/order](Documentation/api-order.md)
 
 ## How to Run
+**1. Clone Repository**
+   ```
+   git clone https://github.com/lulultfh/final-project-paw.git
+   cd final-project-paw
+   ```
+**2. Set Up Database**
+   Buat database di PHPMyAdmin dengan nama `bakery` dan import file `bakery.sql` dari repository ini
+**3. Set Up Env**
+   Sesuaikan konfigurasi database pada file `.env` di folder be:
+   ```
+   DB_HOST='your_database_host'
+   DB_USER='your_database_user'
+   DB_PASSWORD='your_database_password'
+   ```
+**4. Install dependencies**
+   Jalankan pertintah berikut di dalam folder `fe` dan `be`
+   ```
+   npm install
+   ```
+**5. Run projek**
+   - Backend
+     ```
+     cd be
+     nodemon server.js
+     ```
+   - Frontend
+     ```
+     cd fe
+     npm run dev
+     ```
 
 ## Author
 <table align="center">
