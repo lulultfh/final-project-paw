@@ -35,29 +35,29 @@
 └── final-project-paw/
     ├── be/
     │   ├── infrastructure/
-    │   │   ├── database
+    │   │   ├── database                                # konfigurasi & koneksi database
     │   │   ├── middleware
-    │   │   ├── routes
-    │   │   └── utils
-    │   ├── test
-    │   ├── app.js
+    │   │   ├── routes                                  # route endpoint API
+    │   │   └── utils                                   # helper function untuk backend
+    │   ├── test                                        # test case / unit test backend
+    │   ├── app.js                                      # entry point aplikasi backend
     │   ├── package.json
-    │   └── server.js
+    │   └── server.js                                   # server setup & listening port
     ├── fe/
     │   ├── app/
     │   │   ├── (admin)/
     │   │   │   ├── home-admin/
     │   │   │   ├── manage-order/
     │   │   │   ├── manage-product/
-    │   │   │   └── layout.js
-    │   │   ├── (auth)/
+    │   │   │   └── layout.js                            # layout khusus admin
+    │   │   ├── (auth)/                                  # authentication pages
     │   │   │   ├── login/
     │   │   │   └── register/
-    │   │   ├── (cust)/
-    │   │   │   ├── (shop)/
+    │   │   ├── (cust)/                                  # customer-facing pages
+    │   │   │   ├── (shop)/                              # shopping-related pages
     │   │   │   │   ├── cart/
     │   │   │   │   └── product/
-    │   │   │   │       └── [productId]                #dynamic route for product detail
+    │   │   │   │       └── [productId]                  # dynamic route for product detail
     │   │   │   ├── about-us/
     │   │   │   ├── invoice
     │   │   │   ├── order/
@@ -65,7 +65,7 @@
     │   │   │   │   └── edit/
     │   │   │   ├── transaction/
     │   │   │   ├── layout.js
-    │   │   │   └── page.js
+    │   │   │   └── page.js                              # landing page customer
     │   │   ├── context/
     │   │   ├── global.css
     │   │   ├── layout.js
@@ -77,15 +77,15 @@
     │   │   └── cust/
     │   │       └── ui/
     │   ├── core/
-    │   │   ├── domain/
-    │   │   └── hooks/
+    │   │   ├── domain/                                  # model & logic domain
+    │   │   └── hooks/                                   # custom helper
     │   ├── public/
     │   │   ├── font/
     │   │   └── images/
     │   ├── Readme.md
     │   ├── package.json
-    │   └── next.config.mjs
-    └── Readme.md
+    │   └── next.config.mjs                              # konfigurasi Next.js
+    └── Readme.md                                        # dokumentasi utama projek
 ```
 ## API Testing Documentation
 
