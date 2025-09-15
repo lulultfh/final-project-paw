@@ -4,6 +4,7 @@ const db = require("../database/db");
 const multer = require('multer');
 const path = require('path');
 const fs = require("fs");
+const PDFDocument = require('pdfkit');
 
 // Setup upload
 const storage = multer.diskStorage({
@@ -67,6 +68,120 @@ router.get("/admin", async (req, res) => {
     } catch (error) {
         console.error("Error fetching admin orders:", error);
         res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+
+router.get('/admin/download-pdf', async (req, res) => {
+    try {
+        // [UPDATE 1] Query diubah untuk mengambil detail produk menggunakan GROUP_CONCAT
+        const queryText = `
+            SELECT 
+                o.id, 
+                o.total_harga AS totalPrice,
+                o.status, 
+                o.tanggal,
+                u.nama AS userName,
+                u.email AS userEmail,
+                p.namaProduct,
+                oi.qty
+            FROM \`order\` AS o
+            JOIN \`user\` AS u ON o.user_id = u.id
+            LEFT JOIN \`order_item\` oi ON o.id = oi.order_id
+            LEFT JOIN \`product\` p ON oi.product_id = p.id
+            ORDER BY o.tanggal DESC, o.id ASC
+        `;
+
+        const [rows] = await db.query(queryText);
+
+        const ordersMap = new Map();
+        rows.forEach(row => {
+            if (!ordersMap.has(row.id)) {
+                ordersMap.set(row.id, {
+                    id: row.id,
+                    totalPrice: row.totalPrice,
+                    status: row.status,
+                    tanggal: new Date(row.tanggal),
+                    user: { name: row.userName, email: row.userEmail },
+                    products: [] // Siapkan array kosong untuk produk
+                });
+            }
+            // Tambahkan produk ke dalam array jika ada
+            if (row.namaProduct && row.qty) {
+                ordersMap.get(row.id).products.push(`${row.namaProduct} (${row.qty}x)`);
+            }
+        });
+
+        const orders = Array.from(ordersMap.values()).map(order => ({
+            ...order,
+            products: order.products.length > 0 ? order.products.join('\n') : 'Tidak ada produk'
+        }));
+
+        const doc = new PDFDocument({ margin: 50, size: 'A4' });
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', 'attachment; filename=Laporan_Pesanan_Lengkap.pdf');
+        doc.pipe(res);
+
+        // --- Helper Functions ---
+        const formatDate = (date) => date.toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
+        const formatCurrency = (number) => `Rp ${number.toLocaleString('id-ID')}`;
+
+        // --- Header Dokumen ---
+        doc.fontSize(20).font('Helvetica-Bold').text('Laporan Detail Pesanan', { align: 'center' });
+        doc.moveDown();
+
+        let y = doc.y;
+        const pageMargin = 50;
+        const pageBottom = doc.page.height - pageMargin;
+        const drawHr = (posY) => doc.moveTo(pageMargin, posY).lineTo(doc.page.width - pageMargin, posY).stroke('#cccccc');
+
+
+        // [UPDATE 3] Desain ulang cara PDF digambar untuk menyertakan produk
+        orders.forEach(order => {
+            const blockHeight = 80 + doc.heightOfString(order.products, { width: 400 }); // Estimasi tinggi blok
+
+            // Jika blok tidak muat, buat halaman baru
+            if (y + blockHeight > pageBottom) {
+                doc.addPage();
+                y = doc.y;
+            }
+
+            // --- Gambar Detail Order ---
+            doc.font('Helvetica-Bold').fontSize(12).text(`Order ID: ${order.id}`);
+            doc.moveDown(0.5);
+
+            doc.font('Helvetica').fontSize(10);
+            doc.text(`Tanggal: ${formatDate(order.tanggal)}`);
+            doc.text(`Customer: ${order.user.name} (${order.user.email})`);
+            doc.text(`Total: ${formatCurrency(order.totalPrice)}`);
+            doc.text(`Status: ${order.status}`);
+            doc.moveDown(0.5);
+
+            // --- Gambar Detail Produk ---
+            doc.font('Helvetica-Bold').text('Produk yang Dibeli:');
+            doc.font('Helvetica-Oblique').fontSize(9).text(order.products, {
+                indent: 15,
+                lineGap: 4
+            });
+            doc.moveDown();
+
+            y = doc.y;
+            drawHr(y); // Garis pemisah antar order
+            doc.moveDown();
+            y = doc.y;
+        });
+
+        // --- Footer Halaman ---
+        const range = doc.bufferedPageRange();
+        for (let i = range.start; i < range.start + range.count; i++) {
+            doc.switchToPage(i);
+            doc.fontSize(8).text(`Halaman ${i + 1} dari ${range.count}`, 50, doc.page.height - 40, { align: 'center' });
+        }
+
+        doc.end();
+
+    } catch (error) {
+        console.error("Error saat membuat PDF:", error);
+        res.status(500).send("Gagal membuat file PDF.");
     }
 });
 
