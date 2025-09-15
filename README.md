@@ -1,32 +1,92 @@
-# Butter & Bliss🥐
+# Butter&Bliss: Sistem Penjualan dan Pengelolaan Bakery berbasis Website
+![Logo](fe/public/logo-text.svg)
+
 > this project was created for Final Project TI501P Pengembangan Aplikasi Web
 
 ## Table of Contents
-- [Deskripsi Program](#deskripsi-program)
 - [Use Case Diagram](#use-case-diagram)
 - [Project Structure](#project-structure)
 - [API Testing Documentation](#api-testing-documentation)
 - [How to Run](#how-to-run)
 - [Author](#author)
-  
-## Deskripsi Program
-> 
+
 ### Features
-- Browse bakery menu with images and prices
-- Filter by category, flavor, or seasonal specials
+#### Customers
+- Browse bakery menu based on category (cake, bread, pastry, cookies)
+- Product listing displays product images, descriptions, and prices.
+- Product detail shows detailed information (dynamic route parameter).
+- Shopping cart allows adding, removing, or adjusting product quantities.
+- Checkout and invoice enables completing orders and generating invoices.
+- User profile
+- Transaction history lets users review past orders and their status.
+#### Admin
+- Dashboard provides an overview of sales, orders, and popular products.
+- Manage Products enables adding, editing, removing products, and updating stock.
+- Manage Orders allows viewing and processing customer orders.
 ### Tech Stack
-- **Framework**: Next.js 15.4.6, Node.js 22.11.0
-- **Language**: Javascript
+- **Next.js 15 (App Router)**
+- **Node.js 22**
+- **Tailwind CSS**
 
 ## Use Case Diagram
 
 ## Project Structure
 ```
-├── backend/
-├── frontend/
-├── README.md                          # Dokumentasi utama proyek
+└── final-project-paw/
+    ├── be/
+    │   ├── infrastructure/
+    │   │   ├── database                                # konfigurasi & koneksi database
+    │   │   ├── middleware
+    │   │   ├── routes                                  # route endpoint API
+    │   │   └── utils                                   # helper function untuk backend
+    │   ├── test                                        # test case / unit test backend
+    │   ├── app.js                                      # entry point aplikasi backend
+    │   ├── package.json
+    │   └── server.js                                   # server setup & listening port
+    ├── fe/
+    │   ├── app/
+    │   │   ├── (admin)/
+    │   │   │   ├── home-admin/
+    │   │   │   ├── manage-order/
+    │   │   │   ├── manage-product/
+    │   │   │   └── layout.js                            # layout khusus admin
+    │   │   ├── (auth)/                                  # authentication pages
+    │   │   │   ├── login/
+    │   │   │   └── register/
+    │   │   ├── (cust)/                                  # customer-facing pages
+    │   │   │   ├── (shop)/                              # shopping-related pages
+    │   │   │   │   ├── cart/
+    │   │   │   │   └── product/
+    │   │   │   │       └── [productId]                  # dynamic route for product detail
+    │   │   │   ├── about-us/
+    │   │   │   ├── invoice
+    │   │   │   ├── order/
+    │   │   │   ├── profile/
+    │   │   │   │   └── edit/
+    │   │   │   ├── transaction/
+    │   │   │   ├── layout.js
+    │   │   │   └── page.js                              # landing page customer
+    │   │   ├── context/
+    │   │   ├── global.css
+    │   │   ├── layout.js
+    │   │   └── not-found.js
+    │   ├── components/
+    │   │   ├── admin/
+    │   │   │   ├── dashboard/
+    │   │   │   └── manage/
+    │   │   └── cust/
+    │   │       └── ui/
+    │   ├── core/
+    │   │   ├── domain/                                  # model & logic domain
+    │   │   └── hooks/                                   # custom helper
+    │   ├── public/
+    │   │   ├── font/
+    │   │   └── images/
+    │   ├── Readme.md
+    │   ├── package.json
+    │   └── next.config.mjs                              # konfigurasi Next.js
+    └── Readme.md                                        # dokumentasi utama projek
 ```
-
 ## API Testing Documentation
 
 ## How to Run

@@ -19,14 +19,13 @@ export default function ProfilePage() {
     return <div className="text-center mt-20 text-red-500">Silakan login untuk melihat profil Anda.</div>;
   }
 
-  // ✅ Perbaikan: URL Avatar
-  // Gunakan userData.nama, karena di authContext Anda menyimpan 'nama'
-  const avatarUrl = userData.profileImageUrl 
-    ? userData.profileImageUrl 
-    : `/user-avatar-1.png`;
+  // Tentukan URL avatar
+  const avatarUrl = userData.image 
+  ? `http://localhost:3001/uploads/avatar_user/${userData.image}` 
+  : `/user-avatar-1.png`;
 
   return (
-    <div className="max-w-4xl mx-auto p-8 bg-white rounded-lg shadow-md my-10">
+    <div className="max-w-4xl mx-auto p-8 bg-[#F3EBD8] rounded-lg shadow-md my-10">
       <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-6">
         <img
           src={avatarUrl}

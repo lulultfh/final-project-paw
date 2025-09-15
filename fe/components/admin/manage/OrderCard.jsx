@@ -1,16 +1,5 @@
 import React from 'react';
-
-// Format currency
-const formatCurrency = (number) => {
-  if (number === null || number === undefined) {
-    return 'Rp 0';
-  }
-  return new Intl.NumberFormat('id-ID', {
-    style: 'currency',
-    currency: 'IDR',
-    minimumFractionDigits: 0,
-  }).format(number);
-};
+import { formatCurrency } from '@/core/hooks/useAnimatedCounter';
 
 // Format date
 const formatDate = (dateString) => {

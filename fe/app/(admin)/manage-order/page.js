@@ -47,13 +47,48 @@ export default function ManageOrderPage() {
     }
   };
 
+  // Handle PDF download
+  const handleDownloadPDF = async () => {
+    try {
+      const res = await fetch("http://localhost:3001/api/order/admin/download-pdf", {
+        method: "GET",
+        headers: { "Content-Type": "application/pdf" },
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to download PDF");
+      }
+
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "OrderList.pdf";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error("Error downloading PDF:", err);
+      alert("Failed to download PDF. Please try again.");
+    }
+  };
+
   return (
     <div className="flex min-h-screen">
       {/* <SidebarLayoutAdmin /> */}
       <div className="flex-1 p-6 md:p-10">
-        <div className="mb-8">
-          <h1 className="text-5xl font-second italic text-[#878B5A]">Manage Order</h1>
-          <p className="text-gray-500 mt-1">View and manage all customer orders.</p>
+        <div className="mb-8 flex items-center justify-between">
+          <div>
+            <h1 className="text-5xl font-second italic text-[#878B5A]">Manage Order</h1>
+            <p className="text-gray-500 mt-1">View and manage all customer orders.</p>
+          </div>
+          <button
+            onClick={handleDownloadPDF}
+            className="bg-[#878B5A] text-white px-4 py-2 rounded-lg hover:bg-[#6A6E48] transition-colors"
+          >
+            Download PDF
+          </button>
         </div>
 
         {orders.length === 0 && (

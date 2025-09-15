@@ -90,7 +90,7 @@ const HomePage = () => {
             <div className="max-w-7xl mx-auto">
                 {/* Header */}
                 <div className="mb-8">
-                    <h1 className="font-second italic text-5xl text-[#878B5A] mb-2">Admin Dashboard</h1>
+                    <h1 className="font-second italic text-5xl text-[#878B5A] mb-2">Dashboard Admin</h1>
                     <p className="text-gray-600">Lacak performa dan penjualan bakerymu</p>
                 </div>
 

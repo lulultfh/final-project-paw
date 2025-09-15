@@ -167,7 +167,7 @@ export default function OrderPage() {
                     <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-8 shadow-sm">
                         <h2 className="text-2xl font-semibold border-b pb-4 mb-6">Pelanggan</h2>
                         <p className="text-gray-700 text-lg">
-                            {user ? user.name : userData ? userData.name : 'Memuat data user...'}
+                            {user ? user.nama : userData ? userData.nama : 'Memuat data user...'}
                         </p>
                     </div>
 
