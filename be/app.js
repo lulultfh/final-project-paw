@@ -24,6 +24,6 @@ app.use("/api/user", userRoutes);
 app.use("/api/order", orderRoutes);
 app.use("/api/order-item", orderItemRoutes);
 app.use("/api/cart", cartRoutes);
-app.use('/api/users', userRoutes);
+// app.use('/api/users', userRoutes);
 
 module.exports = app;
