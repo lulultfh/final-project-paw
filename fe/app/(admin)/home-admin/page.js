@@ -31,11 +31,7 @@ const HomePage = () => {
                     'Authorization': `Bearer ${userToken}`,
                     'Content-Type': 'application/json'
                 };
-<<<<<<< HEAD
-                const ordersRes = await fetch("http://10.69.2.146:3001/api/order/admin");
-=======
                 const ordersRes = await fetch("http://localhost:3001/api/order/admin");
->>>>>>> 3c1703fe75940d04dd70299752eefb07bba523ae
                 const ordersData = await ordersRes.json();
                 
                 const totalOrders = ordersData.length;
@@ -47,11 +43,7 @@ const HomePage = () => {
                 setLatestOrders(sortedOrders.slice(0, 5));
 
                 // Fetch products data
-<<<<<<< HEAD
-                const productsRes = await fetch("http://10.69.2.146:3001/api/product");
-=======
                 const productsRes = await fetch("http://localhost:3001/api/product");
->>>>>>> 3c1703fe75940d04dd70299752eefb07bba523ae
                 const productsData = await productsRes.json();
                 
                 const totalSoldProducts = productsData.reduce((sum, product) => sum + product.stok, 0); 
