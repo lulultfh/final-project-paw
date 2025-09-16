@@ -6,7 +6,7 @@ export default function ProductCard({ product, onEdit, onDelete }) {
 <<<<<<< HEAD
           src={`http://10.69.2.146:3001/api/product/image/${product.image}`}
 =======
-          src={`http://localhost:3001/api/product/image/${product.image}`}
+          src={`http://10.69.2.146:3001/api/product/image/${product.image}`}
 >>>>>>> 3c1703fe75940d04dd70299752eefb07bba523ae
           alt={product.namaProduct}
           className="w-full h-full object-cover"

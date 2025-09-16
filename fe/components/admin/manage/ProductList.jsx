@@ -37,7 +37,7 @@ export default function ProductListPage() {
 <<<<<<< HEAD
       const res = await fetch("http://10.69.2.146:3001/api/product");
 =======
-      const res = await fetch("http://localhost:3001/api/product");
+      const res = await fetch("http://10.69.2.146:3001/api/product");
 >>>>>>> 3c1703fe75940d04dd70299752eefb07bba523ae
       const data = await res.json();
       setProducts(data);
@@ -118,7 +118,7 @@ export default function ProductListPage() {
 <<<<<<< HEAD
         response = await fetch(`http://10.69.2.146:3001/api/product/${form.id}`, {
 =======
-        response = await fetch(`http://localhost:3001/api/product/${form.id}`, {
+        response = await fetch(`http://10.69.2.146:3001/api/product/${form.id}`, {
 >>>>>>> 3c1703fe75940d04dd70299752eefb07bba523ae
           method: "PUT",
           body: formData,
@@ -127,7 +127,7 @@ export default function ProductListPage() {
 <<<<<<< HEAD
         response = await fetch("http://10.69.2.146:3001/api/product", {
 =======
-        response = await fetch("http://localhost:3001/api/product", {
+        response = await fetch("http://10.69.2.146:3001/api/product", {
 >>>>>>> 3c1703fe75940d04dd70299752eefb07bba523ae
           method: "POST",
           body: formData,
@@ -168,7 +168,7 @@ export default function ProductListPage() {
 <<<<<<< HEAD
     setImagePreview(`http://10.69.2.146:3001/api/product/image/${product.image}`);
 =======
-    setImagePreview(`http://localhost:3001/api/product/image/${product.image}`);
+    setImagePreview(`http://10.69.2.146:3001/api/product/image/${product.image}`);
 >>>>>>> 3c1703fe75940d04dd70299752eefb07bba523ae
     clearMessages();
     openModal();
@@ -180,7 +180,7 @@ export default function ProductListPage() {
 <<<<<<< HEAD
       const response = await fetch(`http://10.69.2.146:3001/api/product/${id}`, {
 =======
-      const response = await fetch(`http://localhost:3001/api/product/${id}`, {
+      const response = await fetch(`http://10.69.2.146:3001/api/product/${id}`, {
 >>>>>>> 3c1703fe75940d04dd70299752eefb07bba523ae
         method: "DELETE"
       });

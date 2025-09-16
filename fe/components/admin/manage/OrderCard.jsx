@@ -52,7 +52,7 @@ export default function OrderCard({ order, onStatusChange, onDelete }) {
 <<<<<<< HEAD
               href={`http://10.69.2.146:3001/uploads/bukti_bayar/${order.bukti_bayar}`}
 =======
-              href={`http://localhost:3001/uploads/bukti_bayar/${order.bukti_bayar}`}
+              href={`http://10.69.2.146:3001/uploads/bukti_bayar/${order.bukti_bayar}`}
 >>>>>>> 3c1703fe75940d04dd70299752eefb07bba523ae
               target="_blank"
               rel="noopener noreferrer"
@@ -64,7 +64,7 @@ export default function OrderCard({ order, onStatusChange, onDelete }) {
 <<<<<<< HEAD
               href={`http://10.69.2.146:3001/api/order/admin/download/${order.bukti_bayar}`}
 =======
-              href={`http://localhost:3001/api/order/admin/download/${order.bukti_bayar}`}
+              href={`http://10.69.2.146:3001/api/order/admin/download/${order.bukti_bayar}`}
 >>>>>>> 3c1703fe75940d04dd70299752eefb07bba523ae
               download
               className="inline-flex items-center bg-gray-200 text-gray-700 text-xs px-3 py-1 rounded-full hover:bg-gray-300 transition-colors"

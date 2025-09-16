@@ -143,7 +143,7 @@ export default function TransactionPage() {
                     >
                       <div className="flex-shrink-0">
                         <img
-                          src={`http://localhost:3001/api/product/image/${item.image}`}
+                          src={`http://10.69.2.146:3001/api/product/image/${item.image}`}
                           alt={item.namaProduct}
                           className="w-16 h-16 rounded-lg object-cover bg-amber-100"
                         />

@@ -12,7 +12,7 @@ export default function ManageOrderPage() {
 <<<<<<< HEAD
       const res = await fetch("http://10.69.2.146:3001/api/order/admin");
 =======
-      const res = await fetch("http://localhost:3001/api/order/admin");
+      const res = await fetch("http://10.69.2.146:3001/api/order/admin");
 >>>>>>> 3c1703fe75940d04dd70299752eefb07bba523ae
       const data = await res.json();
       setOrders(data);
@@ -31,7 +31,7 @@ export default function ManageOrderPage() {
 <<<<<<< HEAD
       await fetch(`http://10.69.2.146:3001/api/order/${orderId}`, {
 =======
-      await fetch(`http://localhost:3001/api/order/${orderId}`, {
+      await fetch(`http://10.69.2.146:3001/api/order/${orderId}`, {
 >>>>>>> 3c1703fe75940d04dd70299752eefb07bba523ae
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -50,7 +50,7 @@ export default function ManageOrderPage() {
 <<<<<<< HEAD
         await fetch(`http://10.69.2.146:3001/api/order/${id}`, { method: "DELETE" });
 =======
-        await fetch(`http://localhost:3001/api/order/${id}`, { method: "DELETE" });
+        await fetch(`http://10.69.2.146:3001/api/order/${id}`, { method: "DELETE" });
 >>>>>>> 3c1703fe75940d04dd70299752eefb07bba523ae
         fetchOrders();
       } catch (err) {
@@ -65,7 +65,7 @@ export default function ManageOrderPage() {
 <<<<<<< HEAD
       const res = await fetch("http://10.69.2.146:3001/api/order/admin/download-pdf", {
 =======
-      const res = await fetch("http://localhost:3001/api/order/admin/download-pdf", {
+      const res = await fetch("http://10.69.2.146:3001/api/order/admin/download-pdf", {
 >>>>>>> 3c1703fe75940d04dd70299752eefb07bba523ae
         method: "GET",
         headers: { "Content-Type": "application/pdf" },

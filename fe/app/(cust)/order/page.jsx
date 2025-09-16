@@ -115,7 +115,7 @@ export default function OrderPage() {
 <<<<<<< HEAD
             const response = await fetch('http://10.69.2.146:3001/api/order', {
 =======
-            const response = await fetch('http://localhost:3001/api/order', {
+            const response = await fetch('http://10.69.2.146:3001/api/order', {
 >>>>>>> 3c1703fe75940d04dd70299752eefb07bba523ae
                 method: 'POST',
                 headers: { 
@@ -184,7 +184,7 @@ export default function OrderPage() {
 <<<<<<< HEAD
                                         src={`http://10.69.2.146:3001/api/product/image/${item.image}`} 
 =======
-                                        src={`http://localhost:3001/api/product/image/${item.image}`} 
+                                        src={`http://10.69.2.146:3001/api/product/image/${item.image}`} 
 >>>>>>> 3c1703fe75940d04dd70299752eefb07bba523ae
                                         alt={item.namaProduct} 
                                         width={100} height={100} 
