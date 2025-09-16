@@ -34,7 +34,7 @@ export default function ProductListPage() {
   // Ambil data produk dari backend
   const fetchProducts = async () => {
     try {
-      const res = await fetch("http://10.49.3.154:3001/api/product");
+      const res = await fetch("http://192.168.1.4:3001/api/product");
       const data = await res.json();
       setProducts(data);
     } catch (err) {
@@ -111,12 +111,12 @@ export default function ProductListPage() {
     try {
       let response;
       if (editing) {
-        response = await fetch(`http://10.49.3.154:3001/api/product/${form.id}`, {
+        response = await fetch(`http://192.168.1.4:3001/api/product/${form.id}`, {
           method: "PUT",
           body: formData,
         });
       } else {
-        response = await fetch("http://10.49.3.154:3001/api/product", {
+        response = await fetch("http://192.168.1.4:3001/api/product", {
           method: "POST",
           body: formData,
         });
@@ -153,7 +153,7 @@ export default function ProductListPage() {
       image: null,
     });
     setEditing(true);
-    setImagePreview(`http://10.49.3.154:3001/api/product/image/${product.image}`);
+    setImagePreview(`http://192.168.1.4:3001/api/product/image/${product.image}`);
     clearMessages();
     openModal();
   };
@@ -161,7 +161,7 @@ export default function ProductListPage() {
   const handleDelete = async (id) => {
     if (!confirm("Yakin ingin menghapus produk ini?")) return;
     try {
-      const response = await fetch(`http://10.49.3.154:3001/api/product/${id}`, {
+      const response = await fetch(`http://192.168.1.4:3001/api/product/${id}`, {
         method: "DELETE"
       });
       if (response.ok) {

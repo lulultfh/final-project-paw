@@ -112,7 +112,7 @@ export default function OrderPage() {
         formData.append('items', JSON.stringify(itemsPayload)); 
 
         try {
-            const response = await fetch('http://10.49.3.154:3001/api/order', {
+            const response = await fetch('http://192.168.1.4:3001/api/order', {
                 method: 'POST',
                 headers: { 
                     'Authorization': `Bearer ${userToken}`
@@ -177,7 +177,7 @@ export default function OrderPage() {
                             {itemsToCheckout.map(item => (
                                 <div key={item.product_id} className="flex items-center space-x-6">
                                     <img 
-                                        src={`http://10.49.3.154:3001/api/product/image/${item.image}`} 
+                                        src={`http://192.168.1.4:3001/api/product/image/${item.image}`} 
                                         alt={item.namaProduct} 
                                         width={100} height={100} 
                                         className="rounded-lg object-cover bg-amber-100" 
