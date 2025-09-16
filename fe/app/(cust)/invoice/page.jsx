@@ -34,7 +34,11 @@ export default function InvoicePage() {
         const fetchInvoice = async () => {
             try {
                 // Ganti URL jika backend Anda berbeda
-                const response = await fetch(`http://192.168.1.4:3001/api/order/invoice/${orderId}`);
+<<<<<<< HEAD
+                const response = await fetch(`http://10.69.2.146:3001/api/order/invoice/${orderId}`);
+=======
+                const response = await fetch(`http://localhost:3001/api/order/invoice/${orderId}`);
+>>>>>>> 3c1703fe75940d04dd70299752eefb07bba523ae
                 if (!response.ok) {
                     const errorData = await response.json();
                     throw new Error(errorData.message || 'Gagal mengambil data invoice.');

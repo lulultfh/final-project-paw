@@ -3,7 +3,11 @@ export default function ProductCard({ product, onEdit, onDelete }) {
     <div className="bg-[#F8D7D1] rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all transform hover:-translate-y-2 relative">
       <div className="relative h-48">
         <img
-          src={`http://192.168.1.4:3001/api/product/image/${product.image}`}
+<<<<<<< HEAD
+          src={`http://10.69.2.146:3001/api/product/image/${product.image}`}
+=======
+          src={`http://localhost:3001/api/product/image/${product.image}`}
+>>>>>>> 3c1703fe75940d04dd70299752eefb07bba523ae
           alt={product.namaProduct}
           className="w-full h-full object-cover"
           onError={(e) => { e.target.src = "/placeholder-image.svg"; }}

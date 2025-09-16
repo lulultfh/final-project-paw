@@ -29,6 +29,7 @@
 - **Tailwind CSS**
 
 ## Use Case Diagram
+<img width="600" height="582" alt="use case bakery revisi 1" src="https://github.com/user-attachments/assets/63cc5b5f-aa3c-4a21-8f54-da43977d0975" /> 
 
 ## Project Structure
 ```
@@ -91,8 +92,40 @@
 [Link Postman](https://app.getpostman.com/join-team?invite_code=294c04167642ad666b9b78c55b8f0ff3fbea7c82aeac4f9d4a7360410975f79f&target_code=cceea7b38499405ac6d466015b67ec1f)
 - [Dokumentasi testing api/product](Documentation/api-product.md)
 - [Dokumentasi testing api/user](Documentation/api-user.md)
+- [Dokumentasi testing api/order](Documentation/api-order.md)
 
 ## How to Run
+**1. Clone Repository** <br>
+   ```
+   git clone https://github.com/lulultfh/final-project-paw.git
+   cd final-project-paw
+   ```
+**2. Set Up Database** <br>
+   Buat database di PHPMyAdmin dengan nama `bakery` dan import file `bakery.sql` dari repository ini
+   
+**3. Set Up Env** <br>
+   Sesuaikan konfigurasi database pada file `.env` di folder be:
+   ```
+   DB_HOST='your_database_host'
+   DB_USER='your_database_user'
+   DB_PASSWORD='your_database_password'
+   ```
+**4. Install dependencies** <br>
+   Jalankan perintah berikut di dalam folder `fe` dan `be`
+   ```
+   npm install
+   ```
+**5. Run projek** <br>
+   - Backend
+     ```
+     cd be
+     nodemon server.js
+     ```
+   - Frontend
+     ```
+     cd fe
+     npm run dev
+     ```
 
 ## Author
 <table align="center">

@@ -77,7 +77,11 @@
 //       }
 
 //       // ✅ GANTI PORT SESUAI SERVERMU (3001)
-//       const apiEndpoint = `http://192.168.1.4:3001/api/users/${userData.id}`;
+<<<<<<< HEAD
+//       const apiEndpoint = `http://10.69.2.146:3001/api/users/${userData.id}`;
+=======
+//       const apiEndpoint = `http://localhost:3001/api/users/${userData.id}`;
+>>>>>>> 3c1703fe75940d04dd70299752eefb07bba523ae
 //       const updatePayload = new FormData();
 
 //       updatePayload.append('nama', formData.nama);
@@ -262,7 +266,11 @@ export default function EditProfilePage() {
 
       // Menampilkan gambar profil yang ada
       const imageUrl = userData.image 
-        ? `http://192.168.1.4:3001/uploads/avatar_user/${userData.image}`
+<<<<<<< HEAD
+        ? `http://10.69.2.146:3001/uploads/avatar_user/${userData.image}`
+=======
+        ? `http://localhost:3001/uploads/avatar_user/${userData.image}`
+>>>>>>> 3c1703fe75940d04dd70299752eefb07bba523ae
         : "/user-avatar-1.png";
       setPreviewImage(imageUrl);
     }
@@ -297,7 +305,11 @@ export default function EditProfilePage() {
         throw new Error("ID Pengguna tidak ditemukan.");
       }
 
-      const apiEndpoint = `http://192.168.1.4:3001/api/user/${userData.id}`;
+<<<<<<< HEAD
+      const apiEndpoint = `http://10.69.2.146:3001/api/user/${userData.id}`;
+=======
+      const apiEndpoint = `http://localhost:3001/api/user/${userData.id}`;
+>>>>>>> 3c1703fe75940d04dd70299752eefb07bba523ae
       const updatePayload = new FormData();
 
       updatePayload.append('nama', formData.nama);

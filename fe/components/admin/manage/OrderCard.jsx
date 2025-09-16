@@ -49,7 +49,11 @@ export default function OrderCard({ order, onStatusChange, onDelete }) {
         {order.bukti_bayar ? (
           <div className="flex gap-2">
             <a
-              href={`http://192.168.1.4:3001/uploads/bukti_bayar/${order.bukti_bayar}`}
+<<<<<<< HEAD
+              href={`http://10.69.2.146:3001/uploads/bukti_bayar/${order.bukti_bayar}`}
+=======
+              href={`http://localhost:3001/uploads/bukti_bayar/${order.bukti_bayar}`}
+>>>>>>> 3c1703fe75940d04dd70299752eefb07bba523ae
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center bg-blue-600 text-white text-xs px-3 py-1 rounded-full hover:bg-blue-700 transition-colors"
@@ -57,7 +61,11 @@ export default function OrderCard({ order, onStatusChange, onDelete }) {
               Open Proof
             </a>
             <a
-              href={`http://192.168.1.4:3001/api/order/admin/download/${order.bukti_bayar}`}
+<<<<<<< HEAD
+              href={`http://10.69.2.146:3001/api/order/admin/download/${order.bukti_bayar}`}
+=======
+              href={`http://localhost:3001/api/order/admin/download/${order.bukti_bayar}`}
+>>>>>>> 3c1703fe75940d04dd70299752eefb07bba523ae
               download
               className="inline-flex items-center bg-gray-200 text-gray-700 text-xs px-3 py-1 rounded-full hover:bg-gray-300 transition-colors"
             >

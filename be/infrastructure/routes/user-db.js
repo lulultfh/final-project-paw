@@ -27,7 +27,15 @@ const storage = multer.diskStorage({
     }
 });
 
-const upload = multer({ storage: storage });
+const fileFilter = (req, file, cb) => {
+    if (file.mimetype === 'image/png' || file.mimetype === 'image/jpg' || file.mimetype === 'image/jpeg') {
+        cb(null, true); // Terima file
+    } else {
+        cb(new Error('Format file tidak didukung! Hanya .png, .jpg, atau .jpeg.'), false);
+    }
+};
+
+const upload = multer({ storage: storage, fileFilter: fileFilter });
 
 router.get("/", [authMiddleware, adminMiddleware], async (req, res) => {
     try {
@@ -61,26 +69,46 @@ router.get('/:id', authMiddleware, async (req, res) => {
 
 // [POST] / - Membuat user baru (Registrasi)
 router.post('/', async (req, res) => {
-    const { nama, username, passwd, email, role } = req.body;
+    try {
+      const { nama, username, passwd, email, role } = req.body;
     if (!nama || !username || !passwd || !email || !role) {
         return res.status(400).json({ message: 'Semua kolom wajib diisi!' });
     }
+    // Validasi rentang password (6-11 karakter)
+    if (passwd.length < 6 || passwd.length > 11) {
+      return res.status(400).json({ message: 'Password harus terdiri dari 6 hingga 11 karakter.' });
+    }
 
-    try {
-        const hashedPassword = await bcrypt.hash(passwd, 10);
-        const query = 'INSERT INTO user (nama, username, passwd, email, role) VALUES (?, ?, ?, ?, ?)';
-        const values = [nama.trim(), username.trim(), hashedPassword, email.trim(), role.trim()];
+   //Validasi username & email unik (pengecekan proaktif)
+    const [existingUsers] = await db.query(
+      'SELECT username, email FROM user WHERE username = ? OR email = ?', 
+      [username.trim(), email.trim()]
+    );
+        
+    if (existingUsers.length > 0) {
+        const userExists = existingUsers[0];
+        if (userExists.username === username.trim()) {
+            return res.status(409).json({ message: 'Username ini sudah digunakan!' });
+        }
+        if (userExists.email === email.trim()) {
+            return res.status(409).json({ message: 'Email ini sudah terdaftar!' });
+        }
+    }
 
-        const [results] = await db.query(query, values);
+    const hashedPassword = await bcrypt.hash(passwd, 10);
+    const query = 'INSERT INTO user (nama, username, passwd, email, role) VALUES (?, ?, ?, ?, ?)';
+    const values = [nama.trim(), username.trim(), hashedPassword, email.trim(), role.trim()];
 
-        const newUser = {
-            id: results.insertId,
-            nama: nama.trim(),
-            username: username.trim(),
-            email: email.trim(),
-            role: role.trim()
-        };
-        res.status(201).json(newUser);
+    const [results] = await db.query(query, values);
+
+    const newUser = {
+        id: results.insertId,
+        nama: nama.trim(),
+        username: username.trim(),
+        email: email.trim(),
+        role: role.trim()
+    };
+    res.status(201).json(newUser);
     } catch (error) {
         console.error('Database error on register:', error);
         if (error.code === 'ER_DUP_ENTRY') {
@@ -89,95 +117,6 @@ router.post('/', async (req, res) => {
         res.status(500).json({ message: 'Internal Server Error' });
     }
 });
-
-// router.put('/:id', [authMiddleware, upload.single('profileImage')], async (req, res) => {
-//     const loggedInUser = req.user;
-//     const requestedUserId = req.params.id;
-
-//     if (loggedInUser.role !== 'admin' && loggedInUser.id.toString() !== requestedUserId) {
-//         return res.status(403).json({ message: "Akses ditolak" });
-//     }
-
-//     const { nama, username, passwd, email, role } = req.body;
-    
-//     if (loggedInUser.role !== 'admin' && role) {
-//         return res.status(403).json({ message: 'Anda tidak bisa mengubah role.' });
-//     }
-
-//     try {
-//         const [users] = await db.query('SELECT * FROM user WHERE id = ?', [requestedUserId]);
-
-//         if (users.length === 0) {
-//             return res.status(404).json({ message: 'User tidak ditemukan' });
-//         }
-//         const user = users[0];
-//         let hashedPassword = user.passwd;
-//         if (passwd) {
-//             // Jika ada password baru yang dikirim, hash password tersebut
-//             hashedPassword = await bcrypt.hash(passwd, 10);
-//         }
-
-//         let newImageFilename = user.image;
-//         if (req.file) {
-//             // Jika ada file baru yang diupload
-//             newImageFilename = req.file.filename;
-
-//             // Hapus gambar lama jika ada
-//             if (user.image) {
-//                 const oldImagePath = path.join(__dirname, '..', 'uploads', 'avatar_user', user.image);
-//                 try {
-//                     await fs.unlink(oldImagePath);
-//                 } catch (err) {
-//                     // Abaikan error jika file tidak ditemukan, tapi log untuk anomali
-//                     console.warn(`Gagal menghapus gambar lama: ${oldImagePath}`, err.message);
-//                 }
-//             }
-//         }
-
-//         // 3. Update database
-//         const query = `
-//             UPDATE user SET 
-//                 nama = ?, 
-//                 username = ?, 
-//                 email = ?, 
-//                 role = ?,
-//                 passwd = ?,
-//                 image = ?
-//             WHERE id = ?
-//         `;
-//         const values = [
-//             nama || user.nama,
-//             username || user.username,
-//             email || user.email,
-//             loggedInUser.role === 'admin' ? (role || user.role) : user.role,
-//             requestedUserId,
-//             hashedPassword,
-//             newImageFilename,
-//         ];
-
-//         await db.query(query, values);
-        
-//         // 4. Ambil data terbaru dan kirim sebagai respons
-//         const [updatedUsers] = await db.query('SELECT id, nama, username, email, role, image FROM user WHERE id = ?', [requestedUserId]);
-
-//         res.json({
-//             message: "Profil berhasil diperbarui!",
-//             user: updatedUsers[0]
-//         });
-
-//     } catch (error) {
-//         console.error('Database error on update user:', error);
-//         // Hapus file yang baru diupload jika terjadi error database
-//         if (req.file) {
-//             const uploadedPath = path.join(__dirname, '..', 'uploads', 'avatar_user', req.file.filename);
-//             await fs.unlink(uploadedPath).catch(err => console.warn('Gagal cleanup file upload:', err.message));
-//         }
-//         if (error.code === 'ER_DUP_ENTRY') {
-//              return res.status(409).json({ message: 'Username atau Email sudah digunakan oleh user lain.' });
-//         }
-//         res.status(500).json({ message: 'Internal Server Error' });
-//     }
-// });
 
 router.put('/:id', [authMiddleware, upload.single('profileImage')], async (req, res) => {
   const loggedInUser = req.user;
@@ -338,5 +277,4 @@ router.post("/login", async (req, res) => {
     }
 });
 
-// Hanya export router, karena semua logika sudah ada di dalam router ini
 module.exports = router;

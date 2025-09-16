@@ -8,7 +8,11 @@ export default function CartCount() {
   useEffect(() => {
     const fetchCart = async () => {
       try {
-        const res = await fetch("http://192.168.1.4:3001/api/cart");
+<<<<<<< HEAD
+        const res = await fetch("http://10.69.2.146:3001/api/cart");
+=======
+        const res = await fetch("http://localhost:3001/api/cart");
+>>>>>>> 3c1703fe75940d04dd70299752eefb07bba523ae
         const data = await res.json();
 
         const totalItems = data.reduce((acc, item) => acc + item.quantity, 0); // hitung jumlah item
