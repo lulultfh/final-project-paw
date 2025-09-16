@@ -69,11 +69,7 @@ export default function ProductPage({ params }) {
           {/* Image Section */}
           <div className="md:col-span-1">
             <img 
-<<<<<<< HEAD
               src={`http://10.69.2.146:3001/api/product/image/${product.image}`} 
-=======
-              src={`http://10.69.2.146:3001/api/product/image/${product.image}`} 
->>>>>>> 3c1703fe75940d04dd70299752eefb07bba523ae
               alt={product.namaProduct} 
               className="w-full h-full object-cover rounded-l-lg"
             />

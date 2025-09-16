@@ -34,11 +34,7 @@ export default function ProductListPage() {
   // Ambil data produk dari backend
   const fetchProducts = async () => {
     try {
-<<<<<<< HEAD
       const res = await fetch("http://10.69.2.146:3001/api/product");
-=======
-      const res = await fetch("http://10.69.2.146:3001/api/product");
->>>>>>> 3c1703fe75940d04dd70299752eefb07bba523ae
       const data = await res.json();
       setProducts(data);
     } catch (err) {
@@ -115,20 +111,12 @@ export default function ProductListPage() {
     try {
       let response;
       if (editing) {
-<<<<<<< HEAD
         response = await fetch(`http://10.69.2.146:3001/api/product/${form.id}`, {
-=======
-        response = await fetch(`http://10.69.2.146:3001/api/product/${form.id}`, {
->>>>>>> 3c1703fe75940d04dd70299752eefb07bba523ae
           method: "PUT",
           body: formData,
         });
       } else {
-<<<<<<< HEAD
         response = await fetch("http://10.69.2.146:3001/api/product", {
-=======
-        response = await fetch("http://10.69.2.146:3001/api/product", {
->>>>>>> 3c1703fe75940d04dd70299752eefb07bba523ae
           method: "POST",
           body: formData,
         });
@@ -165,11 +153,7 @@ export default function ProductListPage() {
       image: null,
     });
     setEditing(true);
-<<<<<<< HEAD
     setImagePreview(`http://10.69.2.146:3001/api/product/image/${product.image}`);
-=======
-    setImagePreview(`http://10.69.2.146:3001/api/product/image/${product.image}`);
->>>>>>> 3c1703fe75940d04dd70299752eefb07bba523ae
     clearMessages();
     openModal();
   };
@@ -177,11 +161,7 @@ export default function ProductListPage() {
   const handleDelete = async (id) => {
     if (!confirm("Yakin ingin menghapus produk ini?")) return;
     try {
-<<<<<<< HEAD
       const response = await fetch(`http://10.69.2.146:3001/api/product/${id}`, {
-=======
-      const response = await fetch(`http://10.69.2.146:3001/api/product/${id}`, {
->>>>>>> 3c1703fe75940d04dd70299752eefb07bba523ae
         method: "DELETE"
       });
       if (response.ok) {
