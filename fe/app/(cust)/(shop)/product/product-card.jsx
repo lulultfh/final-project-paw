@@ -35,11 +35,7 @@ export default function ProductCard({ product }) {
       <Link href={`/product/${product.id}`} className="block">
         <img
           alt={product.namaProduct}
-<<<<<<< HEAD
           src={`http://10.69.2.146:3001/api/product/image/${product.image}`}
-=======
-          src={`http://localhost:3001/api/product/image/${product.image}`}
->>>>>>> 3c1703fe75940d04dd70299752eefb07bba523ae
           className="aspect-square w-full rounded-md object-cover group-hover:opacity-75"
         />
       </Link>

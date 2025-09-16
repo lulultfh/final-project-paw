@@ -11,11 +11,7 @@ export default function NavbarCustMenu() {
 
   // Tentukan gambar profil, gunakan placeholder jika tidak ada
   const profileImageUrl = userData?.image
-<<<<<<< HEAD
   ? `http://10.69.2.146:3001/uploads/avatar_user/${userData.image}`
-=======
-  ? `http://localhost:3001/uploads/avatar_user/${userData.image}`
->>>>>>> 3c1703fe75940d04dd70299752eefb07bba523ae
   : '/user-avatar-1.png'; // Atau gambar default lain
   
   return (
