@@ -25,7 +25,7 @@ export default function RegisterPage() {
     }
 
     try {
-      const res = await fetch('http://10.69.2.146:3001/api/user', { // Pastikan URL endpoint benar
+      const res = await fetch('http://localhost:3001/api/user', { // Pastikan URL endpoint benar
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

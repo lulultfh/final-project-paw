@@ -27,7 +27,7 @@ const CartPage = () => {
 
         // 3. Fetch detail produk dari server menggunakan ID yang didapat
         //    Gantilah dengan endpoint Anda yang sebenarnya
-        const res = await fetch(`http://10.69.2.146:3001/api/cart`, {
+        const res = await fetch(`http://localhost:3001/api/cart`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ ids: productIds }),
@@ -177,7 +177,7 @@ const CartPage = () => {
                       onChange={() => toggleSelect(item.id)}
                     />
                     <img
-                    src={`http://10.69.2.146:3001/api/product/image/${item.image}`} // Gunakan `item.image`
+                    src={`http://localhost:3001/api/product/image/${item.image}`} // Gunakan `item.image`
                     alt={item.namaProduct} // Gunakan `item.namaProduct`
                     className="w-16 h-16 rounded"
                   />

@@ -68,7 +68,7 @@ describe('POST /api/user/login', () => {
       .post('/api/user/login')
       .send({
         username: 'admin',
-        passwd: 'password123'
+        passwd: 'admin123'
       });
 
     expect(response.statusCode).toBe(500);

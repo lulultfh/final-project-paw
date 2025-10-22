@@ -2,7 +2,7 @@
 
 export async function getAllProducts() {
   try {
-    const res = await fetch("http://10.69.2.146:3001/api/product", {
+    const res = await fetch("http://localhost:3001/api/product", {
       cache: "no-store", // Penting agar data selalu terbaru
     });
     if (!res.ok) {
@@ -22,7 +22,7 @@ export async function getAllProducts() {
  */
 export async function getDataById(id) {
   try {
-    const res = await fetch(`http://10.69.2.146:3001/api/product/${id}`, {
+    const res = await fetch(`http://localhost:3001/api/product/${id}`, {
       cache: "no-store",
     });
     if (!res.ok) {
